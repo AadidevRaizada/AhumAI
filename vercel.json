@@ -24,7 +24,6 @@
   ],
   "github": {
     "silent": true
-  },
-  "domains": ["ahumai.co.in"],
-  "alias": ["www.ahumai.co.in"]
+  }
+  
 } 
