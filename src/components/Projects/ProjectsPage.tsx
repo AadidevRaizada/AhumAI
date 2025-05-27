@@ -23,7 +23,7 @@ const ProjectsPage: React.FC = () => {
       title: "Full Ahead Marine and Offshore Services pvt. ltd. Website",
       category: "Website",
       description: "A website for a marine and offshore services company.",
-      image: "images/FullAhead.png",
+      image: "./images/FullAhead.png",
       technologies: ["React", "Tailwind CSS", "Node.js", "Express"]
     }
     

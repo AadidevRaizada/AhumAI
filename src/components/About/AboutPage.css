@@ -327,5 +327,80 @@
   .about-tabs {
     flex-direction: column;
     align-items: center;
+    gap: 10px;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+  }
+  
+  .title-line {
+    width: 30px;
+  }
+  
+  .section-subtitle {
+    font-size: 1rem;
+    padding: 0 15px;
+  }
+  
+  .tab-button {
+    font-size: 0.9rem;
+    padding: 8px 15px;
+  }
+  
+  .content-title {
+    font-size: 1.7rem;
+  }
+  
+  .content-paragraph {
+    font-size: 0.95rem;
+    text-align: left;
+  }
+  
+  .approach-card {
+    padding: 20px;
+  }
+  
+  .approach-title {
+    font-size: 1.2rem;
+  }
+  
+  .approach-description {
+    font-size: 0.9rem;
+  }
+  
+  .team-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .team-card {
+    width: 90%;
+    max-width: 320px;
+  }
+  
+  .team-image {
+    width: 200px;
+    height: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-container {
+    padding: 80px 15px;
+  }
+  
+  .tab-button {
+    font-size: 0.8rem;
+    padding: 8px 12px;
+  }
+  
+  .content-title {
+    font-size: 1.5rem;
+  }
+  
+  .team-image {
+    width: 180px;
+    height: 180px;
   }
 }

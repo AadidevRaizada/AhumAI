@@ -13,6 +13,7 @@ const Navigation: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [terminalActive, setTerminalActive] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState<number | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
   
   const faqs: FAQ[] = [
     {
@@ -52,6 +53,7 @@ const Navigation: React.FC = () => {
   
   const handleNavigation = (section: string) => {
     setActiveSection(section);
+    setMenuOpen(false);
     const element = document.getElementById(section);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
@@ -66,6 +68,10 @@ const Navigation: React.FC = () => {
   const handleQuestionSelect = (id: number) => {
     setSelectedQuestion(id);
   };
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
   
   return (
     <div className={`navigation-container ${isVisible ? 'visible' : ''}`}>
@@ -76,7 +82,13 @@ const Navigation: React.FC = () => {
         <div className={`indicator-line ${activeSection === 'contact' ? 'active' : ''}`} />
       </div>
       
-      <div className="nav-button-container">
+      <div className={`hamburger-menu ${menuOpen ? 'open' : ''}`} onClick={toggleMenu}>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      
+      <div className={`nav-button-container ${menuOpen ? 'open' : ''}`}>
         <button 
           className={`nav-button ${activeSection === 'home' ? 'active' : ''}`}
           onClick={() => handleNavigation('home')}

@@ -336,14 +336,82 @@
 
 @media (max-width: 768px) {
   .company-name {
-    font-size: 3rem;
+    font-size: 2.5rem;
+    letter-spacing: 0.3rem;
   }
   
   .company-tagline {
-    font-size: 1.2rem;
+    font-size: 1rem;
   }
   
   .features-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .hero-description {
+    font-size: 0.9rem;
+    padding: 0 15px;
+  }
+  
+  .cta-button {
+    font-size: 0.9rem;
+    padding: 10px 25px;
+  }
+  
+  .logo-glitch {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .logo-inner {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+  }
+  
+  .title-line {
+    width: 30px;
+  }
+  
+  .feature-card {
+    padding: 20px;
+  }
+  
+  .feature-title {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .company-name {
+    font-size: 2rem;
+    letter-spacing: 0.2rem;
+  }
+  
+  .hero-section {
+    padding: 0 10px;
+  }
+  
+  .logo-glitch {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .logo-inner {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .logo-icon {
+    width: 30px;
+    height: 30px;
   }
 }

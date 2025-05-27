@@ -290,13 +290,15 @@
   }
   
   .project-card {
-    height: 350px;
+    height: auto;
+    min-height: 280px;
   }
   
   .project-card .project-description {
-    max-height: 80px;
+    max-height: 200px;
     opacity: 1;
     margin-bottom: 15px;
+    font-size: 0.9rem;
   }
   
   .project-card .project-tech {
@@ -308,5 +310,45 @@
     opacity: 1;
     transform: translateY(0);
     max-height: 50px;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+  }
+  
+  .title-line {
+    width: 30px;
+  }
+  
+  .section-subtitle {
+    font-size: 1rem;
+    padding: 0 15px;
+  }
+  
+  .project-title {
+    font-size: 1.5rem;
+  }
+  
+  .project-category {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .projects-container {
+    padding: 80px 15px;
+  }
+  
+  .project-card {
+    padding: 20px;
+  }
+  
+  .project-title {
+    font-size: 1.3rem;
+  }
+  
+  .project-button {
+    width: 100%;
+    justify-content: center;
   }
 }

@@ -330,4 +330,55 @@
   .contact-content {
     grid-template-columns: 1fr;
   }
+  
+  .section-title {
+    font-size: 1.5rem;
+  }
+  
+  .title-line {
+    width: 30px;
+  }
+  
+  .section-subtitle {
+    font-size: 1rem;
+    padding: 0 15px;
+  }
+  
+  .contact-info {
+    padding: 25px;
+  }
+  
+  .info-title {
+    font-size: 1.5rem;
+  }
+  
+  .info-text {
+    font-size: 0.95rem;
+  }
+  
+  .detail-item {
+    font-size: 0.9rem;
+  }
+  
+  .office-hours {
+    font-size: 0.9rem;
+  }
+  
+  .office-hours h4 {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-container {
+    padding: 80px 15px;
+  }
+  
+  .contact-info {
+    padding: 20px;
+  }
+  
+  .info-title {
+    font-size: 1.3rem;
+  }
 }
