@@ -105,38 +105,24 @@ h1, h2, h3, h4, h5, h6 {
 /* Main Content */
 .main-content {
   padding-top: 60px;
+  padding-bottom: 60px;
 }
 
 /* Footer */
 .footer {
-  background-color: rgba(0, 0, 0, 0.5);
-  padding: 30px 0;
-  position: relative;
-  border-top: 1px solid var(--border-color);
+  display: none;
 }
 
 .footer-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 20px;
+  display: none;
 }
 
 .footer-logo {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 700;
-  background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  display: none;
 }
 
 .footer-copyright {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
+  display: none;
 }
 
 /* Animations */

@@ -19,7 +19,7 @@ const AboutPage: React.FC = () => {
     {
       name: "Aadidev Raizada",
       role: "Founder & CEO",
-      image: "./images/Aadidev.jpg",
+      image: "/Aadidev.jpg",
       bio: "Aadidev is a serial entrepreneur with a goal to digitize and digitalize businesses, while helping the world grow."
     }
   ];

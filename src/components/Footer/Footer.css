@@ -1,0 +1,236 @@
+.footer-container {
+  background: rgba(0, 0, 0, 0.8);
+  border-top: 1px solid rgba(0, 255, 255, 0.2);
+  padding: 60px 40px 30px;
+  position: relative;
+  overflow: hidden;
+}
+
+.footer-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(to right, transparent, #0ff, transparent);
+  opacity: 0.7;
+}
+
+.footer-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 40px;
+}
+
+.footer-logo {
+  flex: 1;
+  min-width: 200px;
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.footer-logo::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(0, 255, 255, 0.15) 0%, transparent 70%);
+  z-index: 0;
+}
+
+.footer-logo-image {
+  width: 150px;
+  height: auto;
+  filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.6));
+  transition: transform 0.3s ease, filter 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-logo-image:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 15px rgba(0, 255, 255, 1));
+}
+
+.logo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #0ff;
+  text-align: center;
+  z-index: 1;
+}
+
+.logo-placeholder p {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+}
+
+.logo-placeholder small {
+  margin-top: 5px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.footer-links {
+  flex: 3;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 20px;
+}
+
+.footer-column {
+  min-width: 150px;
+}
+
+.footer-column h4 {
+  color: #0ff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  position: relative;
+  display: inline-block;
+}
+
+.footer-column h4::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background: #0ff;
+  transition: width 0.3s ease;
+}
+
+.footer-column:hover h4::after {
+  width: 100%;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-column li {
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+  transition: color 0.3s ease, transform 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  padding-left: 5px;
+}
+
+.footer-column li:hover {
+  color: white;
+  transform: translateX(5px);
+}
+
+.footer-column li::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 50%;
+  width: 0;
+  height: 1px;
+  background: #0ff;
+  transition: width 0.3s ease;
+  transform: translateY(-50%);
+}
+
+.footer-column li:hover::before {
+  width: 5px;
+}
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 50px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-bottom p {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .footer-container {
+    padding: 40px 20px 20px;
+  }
+  
+  .footer-content {
+    flex-direction: column;
+    gap: 30px;
+  }
+  
+  .footer-logo {
+    justify-content: center;
+    padding: 15px;
+    min-height: 120px;
+  }
+  
+  .footer-logo-image {
+    width: 120px;
+    height: auto;
+  }
+  
+  .footer-links {
+    justify-content: flex-start;
+    gap: 30px;
+  }
+  
+  .footer-column {
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-links {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .footer-column h4 {
+    margin-bottom: 15px;
+  }
+  
+  .footer-column li {
+    margin-bottom: 8px;
+  }
+  
+  .footer-bottom {
+    margin-top: 30px;
+  }
+  
+  .footer-logo {
+    padding: 10px;
+    min-height: 100px;
+  }
+  
+  .footer-logo-image {
+    width: 100px;
+    height: auto;
+  }
+} 

@@ -4,8 +4,8 @@ import { Terminal, Cpu, Shield, Zap } from 'lucide-react';
 import './HomePage.css';
 
 const HomePage: React.FC = () => {
-  const [isVisible, setIsVisible] = useState(false);
   const [activeFeature, setActiveFeature] = useState(0);
+  const [logoError, setLogoError] = useState(false);
   const featuresRef = useRef<HTMLDivElement>(null);
   
   const features = [
@@ -32,16 +32,11 @@ const HomePage: React.FC = () => {
   ];
   
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsVisible(true);
-    }, 500);
-    
     const featureInterval = setInterval(() => {
       setActiveFeature(prev => (prev + 1) % features.length);
     }, 4000);
     
     return () => {
-      clearTimeout(timer);
       clearInterval(featureInterval);
     };
   }, []);
@@ -65,11 +60,21 @@ const HomePage: React.FC = () => {
   
   return (
     <section id="home" className="home-container">
-      <div className={`hero-section ${isVisible ? 'visible' : ''}`}>
+      <div className="hero-section visible">
         <div className="logo-container">
-          <div className="logo-glitch">
+          <div className="logo-frame">
+            <div className="logo-glow"></div>
             <div className="logo-inner">
-              <Cpu className="logo-icon" />
+              {logoError ? (
+                <div className="logo-text-hero">AhumAI</div>
+              ) : (
+                <img 
+                  src="/AhumAI_logo_resized.png" 
+                  alt="AhumAI Logo" 
+                  className="logo-image" 
+                  onError={() => setLogoError(true)}
+                />
+              )}
             </div>
           </div>
         </div>
@@ -77,7 +82,7 @@ const HomePage: React.FC = () => {
         <h1 className="company-name">
           <GlitchText 
             text="AhumAI" 
-            delay={1000}
+            delay={500}
             glitchIntensity="high"
             className="company-title"
           />
@@ -86,7 +91,7 @@ const HomePage: React.FC = () => {
         <div className="tagline-container">
           <GlitchText 
             text="Crafting Digital Futures" 
-            delay={2000}
+            delay={800}
             className="company-tagline"
           />
         </div>
@@ -94,7 +99,7 @@ const HomePage: React.FC = () => {
         <div className="hero-description">
           <GlitchText 
             text="We build next-generation solutions that transform businesses in the digital age." 
-            delay={3000}
+            delay={1000}
             glitchIntensity="low"
           />
         </div>

@@ -14,6 +14,7 @@ const Navigation: React.FC = () => {
   const [terminalActive, setTerminalActive] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState<number | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [logoError, setLogoError] = useState(false);
   
   const faqs: FAQ[] = [
     {
@@ -75,6 +76,12 @@ const Navigation: React.FC = () => {
   
   return (
     <div className={`navigation-container ${isVisible ? 'visible' : ''}`}>
+      <div className={`hamburger-menu ${menuOpen ? 'open' : ''}`} onClick={toggleMenu}>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      
       <div className="nav-indicator">
         <div className={`indicator-line ${activeSection === 'home' ? 'active' : ''}`} />
         <div className={`indicator-line ${activeSection === 'projects' ? 'active' : ''}`} />
@@ -82,44 +89,53 @@ const Navigation: React.FC = () => {
         <div className={`indicator-line ${activeSection === 'contact' ? 'active' : ''}`} />
       </div>
       
-      <div className={`hamburger-menu ${menuOpen ? 'open' : ''}`} onClick={toggleMenu}>
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-      
-      <div className={`nav-button-container ${menuOpen ? 'open' : ''}`}>
-        <button 
-          className={`nav-button ${activeSection === 'home' ? 'active' : ''}`}
-          onClick={() => handleNavigation('home')}
-        >
-          <span className="nav-text">HOME</span>
-          <span className="nav-dot"></span>
-        </button>
+      <div className={`vertical-nav ${menuOpen ? 'open' : ''}`}>
+        <div className="nav-logo">
+          {logoError ? (
+            <div className="logo-text">AhumAI</div>
+          ) : (
+            <img 
+              src="/AhumAI_logo_resized.png" 
+              alt="AhumAI Logo" 
+              className="nav-logo-image" 
+              onError={() => setLogoError(true)}
+            />
+          )}
+        </div>
         
-        <button 
-          className={`nav-button ${activeSection === 'projects' ? 'active' : ''}`}
-          onClick={() => handleNavigation('projects')}
-        >
-          <span className="nav-text">PROJECTS</span>
-          <span className="nav-dot"></span>
-        </button>
-        
-        <button 
-          className={`nav-button ${activeSection === 'about' ? 'active' : ''}`}
-          onClick={() => handleNavigation('about')}
-        >
-          <span className="nav-text">ABOUT</span>
-          <span className="nav-dot"></span>
-        </button>
-        
-        <button 
-          className={`nav-button ${activeSection === 'contact' ? 'active' : ''}`}
-          onClick={() => handleNavigation('contact')}
-        >
-          <span className="nav-text">CONTACT</span>
-          <span className="nav-dot"></span>
-        </button>
+        <div className="nav-button-container">
+          <button 
+            className={`nav-button ${activeSection === 'home' ? 'active' : ''}`}
+            onClick={() => handleNavigation('home')}
+          >
+            <span className="nav-text">HOME</span>
+            <span className="nav-dot"></span>
+          </button>
+          
+          <button 
+            className={`nav-button ${activeSection === 'projects' ? 'active' : ''}`}
+            onClick={() => handleNavigation('projects')}
+          >
+            <span className="nav-text">PROJECTS</span>
+            <span className="nav-dot"></span>
+          </button>
+          
+          <button 
+            className={`nav-button ${activeSection === 'about' ? 'active' : ''}`}
+            onClick={() => handleNavigation('about')}
+          >
+            <span className="nav-text">ABOUT</span>
+            <span className="nav-dot"></span>
+          </button>
+          
+          <button 
+            className={`nav-button ${activeSection === 'contact' ? 'active' : ''}`}
+            onClick={() => handleNavigation('contact')}
+          >
+            <span className="nav-text">CONTACT</span>
+            <span className="nav-dot"></span>
+          </button>
+        </div>
       </div>
       
       <button 

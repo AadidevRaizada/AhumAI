@@ -6,6 +6,7 @@ import AboutPage from './components/About/AboutPage';
 import ContactPage from './components/Contact/ContactPage';
 import AnimatedBackground from './components/AnimatedBackground/AnimatedBackground';
 import CursorEffect from './components/CursorEffect/CursorEffect';
+import Footer from './components/Footer/Footer';
 import './App.css';
 
 function App() {
@@ -42,14 +43,7 @@ function App() {
             <ContactPage />
           </main>
           
-          <footer className="footer">
-            <div className="footer-content">
-              <div className="footer-logo">AhumAI</div>
-              <div className="footer-copyright">
-                &copy; {new Date().getFullYear()} AhumAI. All rights reserved.
-              </div>
-            </div>
-          </footer>
+          <Footer />
         </>
       )}
     </div>
