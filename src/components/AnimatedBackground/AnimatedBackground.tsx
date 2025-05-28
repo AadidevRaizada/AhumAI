@@ -35,14 +35,15 @@ const AnimatedBackground: React.FC = () => {
     
     // Particle class
     class Particle {
-      x: number;
-      y: number;
-      size: number;
-      speedX: number;
-      speedY: number;
-      color: string;
+      x: number = 0;
+      y: number = 0;
+      size: number = 1;
+      speedX: number = 0;
+      speedY: number = 0;
+      color: string = '#0ff';
       
       constructor() {
+        if (!canvas) return;
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
         this.size = Math.random() * 1.5 + 0.5;
@@ -55,6 +56,7 @@ const AnimatedBackground: React.FC = () => {
       }
       
       update() {
+        if (!canvas) return;
         // Update position
         this.x += this.speedX;
         this.y += this.speedY;
@@ -65,6 +67,10 @@ const AnimatedBackground: React.FC = () => {
         if (this.y < 0) this.y = canvas.height;
         if (this.y > canvas.height) this.y = 0;
         
+        // Add small random movement
+        this.speedX += (Math.random() - 0.5) * 0.05; // Adjust multiplier for speed
+        this.speedY += (Math.random() - 0.5) * 0.05; // Adjust multiplier for speed
+
         // React to mouse position
         const dx = mouseX - this.x;
         const dy = mouseY - this.y;
@@ -79,6 +85,11 @@ const AnimatedBackground: React.FC = () => {
         // Apply some drag
         this.speedX *= 0.99;
         this.speedY *= 0.99;
+
+        // Clamp speed to a maximum
+        const maxSpeed = 0.5;
+        this.speedX = Math.max(-maxSpeed, Math.min(maxSpeed, this.speedX));
+        this.speedY = Math.max(-maxSpeed, Math.min(maxSpeed, this.speedY));
       }
       
       draw() {
