@@ -1,0 +1,5 @@
+Contact: mailto:security@ahumai.co.in
+Expires: 2024-12-31T23:59:59.000Z
+Preferred-Languages: en
+Canonical: https://ahumai.co.in/.well-known/security.txt
+Policy: https://ahumai.co.in/security-policy 

@@ -7,10 +7,17 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Build directories
 node_modules
 dist
 dist-ssr
 *.local
+build
+
+# Environment variables
+.env
+.env.*
+!.env.example
 
 # Editor directories and files
 .vscode/*
@@ -22,6 +29,19 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-.env
 
+# Deployment related
 .vercel
+.netlify
+.firebase
+
+# Cache and temporary files
+.cache
+.temp
+.tmp
+.eslintcache
+*.tsbuildinfo
+
+# Coverage reports
+coverage
+.nyc_output

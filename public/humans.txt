@@ -1,0 +1,16 @@
+/* TEAM */
+Developer: AhumAI Team
+Contact: contact@ahumai.co.in
+Twitter: @ahumai
+From: India
+
+/* SITE */
+Last update: 2023-08-01
+Language: English
+Doctype: HTML5
+IDE: Visual Studio Code, Cursor
+
+/* TECHNOLOGY */
+Standards: HTML5, CSS3, JavaScript
+Components: React, Auth0, Tailwind CSS
+Software: Vite, TypeScript 

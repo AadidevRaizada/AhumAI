@@ -10,6 +10,25 @@ export default defineConfig({
   assetsInclude: ['**/*.jpg', '**/*.png', '**/*.svg'],
   build: {
     assetsDir: 'assets',
-    outDir: 'dist'
-  }
+    outDir: 'dist',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          auth: ['@auth0/auth0-react'],
+        },
+      },
+    },
+    terserOptions: {
+      compress: {
+        drop_console: true,
+      },
+    },
+    reportCompressedSize: true,
+    chunkSizeWarningLimit: 1000,
+  },
+  server: {
+    host: true,
+    port: 3000,
+  },
 });
