@@ -15,7 +15,6 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom'],
-          auth: ['@auth0/auth0-react'],
         },
       },
     },

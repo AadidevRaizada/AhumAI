@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth0 } from '@auth0/auth0-react';
+import { Route, Routes } from 'react-router-dom';
 import Navigation from './components/Navigation/Navigation';
 import HomePage from './components/Home/HomePage';
 import ProjectsPage from './components/Projects/ProjectsPage';
@@ -9,14 +8,10 @@ import ContactPage from './components/Contact/ContactPage';
 import AnimatedBackground from './components/AnimatedBackground/AnimatedBackground';
 import CursorEffect from './components/CursorEffect/CursorEffect';
 import Footer from './components/Footer/Footer';
-import { Profile } from './components/Auth';
 import './App.css';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
-  const { isAuthenticated, isLoading: authLoading } = useAuth0();
-  const navigate = useNavigate();
-  const location = useLocation();
   
   useEffect(() => {
     // Simulate loading time
@@ -27,14 +22,7 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
   
-  // Handle auth callback
-  useEffect(() => {
-    if (!authLoading && location.pathname === '/callback') {
-      navigate('/');
-    }
-  }, [authLoading, location.pathname, navigate]);
-  
-  if (isLoading || authLoading) {
+  if (isLoading) {
     return (
       <div className="loading-screen">
         <div className="loader">
@@ -60,10 +48,6 @@ function App() {
             <ContactPage />
           </main>
         } />
-        <Route path="/callback" element={<div>Completing authentication...</div>} />
-        {isAuthenticated && (
-          <Route path="/profile" element={<Profile />} />
-        )}
       </Routes>
       
       <Footer />

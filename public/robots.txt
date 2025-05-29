@@ -1,4 +1,9 @@
+# AhumAI Website Robots.txt
 User-agent: *
 Allow: /
 
-Sitemap: https://ahumai.co.in/sitemap.xml 
+# Sitemap location
+Sitemap: https://ahumai.co.in/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 10 

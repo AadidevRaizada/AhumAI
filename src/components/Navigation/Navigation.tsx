@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Terminal } from 'lucide-react';
-import { AuthStatus } from '../Auth';
 import './Navigation.css';
 
 interface FAQ {
@@ -136,10 +135,6 @@ const Navigation: React.FC = () => {
             <span className="nav-text">CONTACT</span>
             <span className="nav-dot"></span>
           </button>
-          
-          <div className="auth-status-container">
-            <AuthStatus />
-          </div>
         </div>
       </div>
       
