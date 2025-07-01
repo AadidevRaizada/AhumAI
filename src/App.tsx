@@ -5,6 +5,8 @@ import HomePage from './components/Home/HomePage';
 import ProjectsPage from './components/Projects/ProjectsPage';
 import AboutPage from './components/About/AboutPage';
 import ContactPage from './components/Contact/ContactPage';
+import ClientOnboarding from './components/ClientOnboarding';
+import AdminDashboard from './components/AdminDashboard';
 import AnimatedBackground from './components/AnimatedBackground/AnimatedBackground';
 import CursorEffect from './components/CursorEffect/CursorEffect';
 import Footer from './components/Footer/Footer';
@@ -37,20 +39,32 @@ function App() {
     <div className="app">
       <AnimatedBackground />
       <CursorEffect />
-      <Navigation />
       
       <Routes>
-        <Route path="/" element={
-          <main className="main-content">
-            <HomePage />
-            <ProjectsPage />
-            <AboutPage />
-            <ContactPage />
-          </main>
+        {/* Client Onboarding Route - Standalone page */}
+        <Route path="/client-onboarding" element={<ClientOnboarding />} />
+        
+        {/* Admin Dashboard Route - Standalone page */}
+        <Route path="/admin" element={<AdminDashboard />} />
+        
+        {/* Main Website Routes */}
+        <Route path="/*" element={
+          <>
+            <Navigation />
+            <Routes>
+              <Route path="/" element={
+                <main className="main-content">
+                  <HomePage />
+                  <ProjectsPage />
+                  <AboutPage />
+                  <ContactPage />
+                </main>
+              } />
+            </Routes>
+            <Footer />
+          </>
         } />
       </Routes>
-      
-      <Footer />
     </div>
   );
 }
