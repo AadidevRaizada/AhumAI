@@ -8,7 +8,7 @@
 }
 
 .onboarding-container {
-  max-width: 800px;
+  max-width: 900px;
   width: 100%;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
@@ -18,6 +18,7 @@
   margin-top: 2rem;
 }
 
+/* Header Styles - Aesthetic-Usability Effect */
 .onboarding-header {
   background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
   color: white;
@@ -25,21 +26,120 @@
   text-align: center;
 }
 
+.logo-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.header-logo {
+  width: 60px;
+  height: 60px;
+  filter: brightness(0) invert(1);
+}
+
 .onboarding-header h1 {
   font-size: 2.5rem;
   font-weight: 700;
-  margin: 0 0 1rem 0;
+  margin: 0;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .onboarding-header p {
   font-size: 1.1rem;
-  margin: 0;
+  margin: 0 0 1.5rem 0;
   opacity: 0.9;
 }
 
+/* Progress Bar - Goal-Gradient Effect */
+.progress-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00d4ff 0%, #00ff88 100%);
+  border-radius: 10px;
+  transition: width 0.5s ease;
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+}
+
+.progress-steps {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.progress-steps span {
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.progress-steps span.active {
+  opacity: 1;
+  color: #00ff88;
+}
+
+/* Form Styles - Chunking and Cognitive Load Reduction */
 .onboarding-form {
   padding: 3rem 2rem;
+}
+
+.form-step {
+  display: none;
+  animation: fadeIn 0.5s ease;
+}
+
+.form-step.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.step-title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 0.5rem 0;
+}
+
+.step-number {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.step-description {
+  color: #666;
+  font-size: 1rem;
+  margin: 0 0 2rem 0;
+  padding-left: 3rem;
 }
 
 .form-grid {
@@ -58,20 +158,30 @@
   grid-column: 1 / -1;
 }
 
+/* Enhanced Form Input Styles - Fitts's Law */
 .form-group label {
   font-weight: 600;
   color: #2d3748;
   margin-bottom: 0.5rem;
   font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.required {
+  color: #e53e3e;
+  font-weight: 700;
 }
 
 .form-group input {
-  padding: 1rem;
+  padding: 1rem 1.5rem;
   border: 2px solid #e2e8f0;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 1rem;
   transition: all 0.3s ease;
   background: white;
+  min-height: 48px; /* Fitts's Law - adequate target size */
 }
 
 .form-group input:focus {
@@ -86,53 +196,300 @@
   box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
 }
 
+.form-group input::placeholder {
+  color: #a0aec0;
+  font-style: italic;
+}
+
 .error-message {
   color: #e53e3e;
   font-size: 0.85rem;
   margin-top: 0.5rem;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.error-message::before {
+  content: "⚠️";
+  font-size: 0.8rem;
+}
+
+/* Legal Section Styles - Hierarchy and Chunking */
+.legal-section, .signature-section {
+  margin-bottom: 3rem;
+  padding: 2rem;
+  background: #f8f9fa;
+  border-radius: 16px;
+  border: 2px solid #e2e8f0;
+}
+
+.section-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 0.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-title::before {
+  content: "📋";
+  font-size: 1.2rem;
+}
+
+.signature-section .section-title::before {
+  content: "✍️";
+}
+
+.section-description {
+  color: #666;
+  font-size: 0.95rem;
+  margin: 0 0 1.5rem 0;
+  line-height: 1.5;
+}
+
+/* Legal Agreements Styles */
+.legal-agreements {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.legal-item {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.legal-item:hover {
+  border-color: #cbd5e0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+/* Custom Checkbox Styles - Von Restorff Effect */
+.checkbox-group input[type="checkbox"] {
+  display: none;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #2d3748;
+  font-weight: 500;
+}
+
+.checkmark {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #cbd5e0;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.checkbox-group input[type="checkbox"]:checked + .checkbox-label .checkmark {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: #667eea;
+}
+
+.checkbox-group input[type="checkbox"]:checked + .checkbox-label .checkmark::after {
+  content: "✓";
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.doc-link {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  margin: 0 0.25rem;
+  transition: color 0.3s ease;
+}
+
+.doc-link:hover {
+  color: #5a67d8;
+  text-decoration: underline;
+}
+
+/* File Upload Styles */
+.file-upload-container {
+  position: relative;
+}
+
+.file-input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.file-upload-display {
+  border: 2px dashed #cbd5e0;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  background: white;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.file-upload-display:hover {
+  border-color: #667eea;
+  background: #f8f9ff;
+}
+
+.file-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: #666;
+}
+
+.upload-icon {
+  font-size: 2rem;
+}
+
+.file-hint {
+  font-size: 0.8rem;
+  color: #999;
 }
 
 .signature-preview {
-  margin-top: 1rem;
-  padding: 1rem;
-  border: 2px dashed #cbd5e0;
-  border-radius: 10px;
-  background: #f7fafc;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
 }
 
 .signature-preview img {
-  max-width: 200px;
-  max-height: 100px;
-  border-radius: 5px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 250px;
+  max-height: 120px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 2px solid #e2e8f0;
 }
 
-.submit-btn {
-  width: 100%;
-  padding: 1.2rem 2rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+.signature-status {
+  color: #38a169;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Navigation Buttons - Jakob's Law */
+.step-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 2px solid #e2e8f0;
+}
+
+.btn-primary, .btn-secondary, .btn-submit {
+  padding: 1rem 2rem;
   border: none;
   border-radius: 12px;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  min-height: 48px;
+  min-width: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-.submit-btn:hover:not(:disabled) {
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
 }
 
-.submit-btn:disabled {
-  opacity: 0.6;
+.btn-secondary {
+  background: #f7fafc;
+  color: #4a5568;
+  border: 2px solid #e2e8f0;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #edf2f7;
+  border-color: #cbd5e0;
+  transform: translateY(-1px);
+}
+
+.btn-submit {
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  color: white;
+  font-size: 1.1rem;
+  padding: 1.2rem 2.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 8px 20px rgba(72, 187, 120, 0.3);
+}
+
+.btn-submit:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(72, 187, 120, 0.4);
+}
+
+.btn-primary:disabled, .btn-secondary:disabled, .btn-submit:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
-  transform: none;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Loading States */
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.submit-icon {
+  font-size: 1.1rem;
 }
 
 /* PDF Template Styles */
@@ -177,7 +534,7 @@
   line-height: 1.6;
 }
 
-.client-details h2 {
+.client-details h2, .legal-confirmations h2 {
   color: #1e3c72;
   font-size: 20px;
   margin: 0 0 20px 0;
@@ -201,6 +558,16 @@
   flex: 1;
   padding-left: 20px;
   color: #2d3748;
+}
+
+.legal-confirmations {
+  margin: 30px 0;
+}
+
+.agreement-item {
+  margin: 10px 0;
+  color: #38a169;
+  font-weight: 600;
 }
 
 .signature-section {
@@ -255,26 +622,56 @@
   line-height: 1.4;
 }
 
-/* Responsive Design */
+/* Responsive Design - Mobile First Approach */
 @media (max-width: 768px) {
   .client-onboarding {
-    padding: 1rem;
+    padding: 1rem 0.5rem;
   }
 
   .onboarding-container {
     margin-top: 1rem;
+    border-radius: 16px;
   }
 
   .onboarding-header {
     padding: 2rem 1.5rem;
   }
 
+  .logo-section {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .header-logo {
+    width: 50px;
+    height: 50px;
+  }
+
   .onboarding-header h1 {
     font-size: 2rem;
   }
 
+  .progress-steps {
+    font-size: 0.8rem;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
   .onboarding-form {
     padding: 2rem 1.5rem;
+  }
+
+  .step-title {
+    font-size: 1.5rem;
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+
+  .step-description {
+    padding-left: 0;
+    text-align: center;
   }
 
   .form-grid {
@@ -284,6 +681,28 @@
 
   .form-group.full-width {
     grid-column: 1;
+  }
+
+  .legal-section, .signature-section {
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .step-navigation {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .btn-primary, .btn-secondary, .btn-submit {
+    width: 100%;
+  }
+
+  .checkbox-group {
+    align-items: flex-start;
+  }
+
+  .checkbox-label {
+    font-size: 0.9rem;
   }
 
   .pdf-template {
@@ -297,19 +716,84 @@
   }
 }
 
-/* Animation for form submission */
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
+@media (max-width: 480px) {
+  .onboarding-header {
+    padding: 1.5rem 1rem;
   }
-  70% {
-    box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
+
+  .onboarding-header h1 {
+    font-size: 1.8rem;
   }
-  100% {
-    box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+
+  .onboarding-form {
+    padding: 1.5rem 1rem;
+  }
+
+  .step-title {
+    font-size: 1.3rem;
+  }
+
+  .step-number {
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
+  }
+
+  .form-group input {
+    padding: 0.875rem 1rem;
+  }
+
+  .legal-section, .signature-section {
+    padding: 1rem;
+  }
+
+  .legal-item {
+    padding: 1rem;
+  }
+
+  .checkbox-label {
+    font-size: 0.85rem;
+  }
+
+  .btn-primary, .btn-secondary, .btn-submit {
+    padding: 0.875rem 1.5rem;
+    font-size: 0.9rem;
   }
 }
 
-.submit-btn:disabled {
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .form-group input {
+    border-width: 3px;
+  }
+  
+  .btn-primary, .btn-submit {
+    border: 2px solid #000;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Animation for form submission */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(72, 187, 120, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(72, 187, 120, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(72, 187, 120, 0);
+  }
+}
+
+.btn-submit:disabled {
   animation: pulse 2s infinite;
 } 

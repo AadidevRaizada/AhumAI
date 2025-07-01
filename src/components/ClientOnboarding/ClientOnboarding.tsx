@@ -11,6 +11,11 @@ interface ClientFormData {
   businessEmail: string;
   businessName: string;
   signature?: FileList;
+  // Legal agreements - applying UX principles for clear consent
+  privacyPolicy: boolean;
+  termsConditions: boolean;
+  supportAddendum: boolean;
+  invoiceTerms: boolean;
 }
 
 interface ClientData extends Omit<ClientFormData, 'signature'> {
@@ -20,11 +25,18 @@ interface ClientData extends Omit<ClientFormData, 'signature'> {
 }
 
 const ClientOnboarding: React.FC = () => {
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<ClientFormData>();
+  const { register, handleSubmit, formState: { errors }, reset, watch } = useForm<ClientFormData>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [signaturePreview, setSignaturePreview] = useState<string>('');
   const [submittedData, setSubmittedData] = useState<ClientData | null>(null);
+  const [currentStep, setCurrentStep] = useState(1);
   const pdfRef = useRef<HTMLDivElement>(null);
+
+  // Watch form values for progressive disclosure (UX principle)
+  const watchedValues = watch();
+  const allFieldsFilled = watchedValues.firstName && watchedValues.lastName && 
+                         watchedValues.mobileNumber && watchedValues.businessEmail && 
+                         watchedValues.businessName && signaturePreview;
 
   const handleSignatureUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -111,8 +123,11 @@ const ClientOnboarding: React.FC = () => {
         // Reset form
         reset();
         setSignaturePreview('');
+        setCurrentStep(1);
         
-        alert('Client onboarding completed successfully! PDF has been generated and saved locally.');
+        // Peak-End Rule: Positive completion message
+        const completionMessage = `🎉 Welcome to AhumAI family, ${clientData.firstName}! Your onboarding is complete. Your client ID is ${clientData.clientId}. We've sent your confirmation document - check your downloads!`;
+        alert(completionMessage);
       }, 500);
 
     } catch (error) {
@@ -122,110 +137,343 @@ const ClientOnboarding: React.FC = () => {
     }
   };
 
+  // Step navigation for better UX (Chunking principle)
+  const nextStep = () => {
+    if (currentStep < 3) setCurrentStep(currentStep + 1);
+  };
+
+  const prevStep = () => {
+    if (currentStep > 1) setCurrentStep(currentStep - 1);
+  };
+
+  // Progress indicator (Goal-Gradient Effect)
+  const progressPercentage = (currentStep / 3) * 100;
+
   return (
     <div className="client-onboarding">
       <div className="onboarding-container">
         <div className="onboarding-header">
-          <h1>Client Onboarding</h1>
-          <p>Please fill in all the required information to complete your registration</p>
+          <div className="logo-section">
+            <img src="/ahumai_logo.svg" alt="AhumAI Logo" className="header-logo" />
+            <h1>Client Onboarding</h1>
+          </div>
+          <p>Join the AhumAI family in just 3 simple steps</p>
+          
+          {/* Progress Bar - Goal-Gradient Effect */}
+          <div className="progress-container">
+            <div className="progress-bar">
+              <div 
+                className="progress-fill" 
+                style={{ width: `${progressPercentage}%` }}
+              ></div>
+            </div>
+            <div className="progress-steps">
+              <span className={currentStep >= 1 ? 'active' : ''}>1. Personal Info</span>
+              <span className={currentStep >= 2 ? 'active' : ''}>2. Business Details</span>
+              <span className={currentStep >= 3 ? 'active' : ''}>3. Legal & Signature</span>
+            </div>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="onboarding-form">
-          <div className="form-grid">
-            <div className="form-group">
-              <label htmlFor="firstName">First Name *</label>
-              <input
-                type="text"
-                id="firstName"
-                {...register('firstName', { required: 'First name is required' })}
-                className={errors.firstName ? 'error' : ''}
-              />
-              {errors.firstName && <span className="error-message">{errors.firstName.message}</span>}
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="lastName">Last Name *</label>
-              <input
-                type="text"
-                id="lastName"
-                {...register('lastName', { required: 'Last name is required' })}
-                className={errors.lastName ? 'error' : ''}
-              />
-              {errors.lastName && <span className="error-message">{errors.lastName.message}</span>}
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="mobileNumber">Mobile Number *</label>
-              <input
-                type="tel"
-                id="mobileNumber"
-                {...register('mobileNumber', { 
-                  required: 'Mobile number is required',
-                  pattern: {
-                    value: /^[+]?[\d\s\-()]+$/,
-                    message: 'Please enter a valid mobile number'
-                  }
-                })}
-                className={errors.mobileNumber ? 'error' : ''}
-              />
-              {errors.mobileNumber && <span className="error-message">{errors.mobileNumber.message}</span>}
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="businessEmail">Business Email *</label>
-              <input
-                type="email"
-                id="businessEmail"
-                {...register('businessEmail', { 
-                  required: 'Business email is required',
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: 'Please enter a valid email address'
-                  }
-                })}
-                className={errors.businessEmail ? 'error' : ''}
-              />
-              {errors.businessEmail && <span className="error-message">{errors.businessEmail.message}</span>}
-            </div>
-
-            <div className="form-group full-width">
-              <label htmlFor="businessName">Business Name *</label>
-              <input
-                type="text"
-                id="businessName"
-                {...register('businessName', { required: 'Business name is required' })}
-                className={errors.businessName ? 'error' : ''}
-              />
-              {errors.businessName && <span className="error-message">{errors.businessName.message}</span>}
-            </div>
-
-            <div className="form-group full-width">
-              <label htmlFor="signature">Upload Signature *</label>
-              <input
-                type="file"
-                id="signature"
-                accept="image/*"
-                {...register('signature', { required: 'Signature is required' })}
-                onChange={handleSignatureUpload}
-                className={errors.signature ? 'error' : ''}
-              />
-              {errors.signature && <span className="error-message">{errors.signature.message}</span>}
+          {/* Step 1: Personal Information - Chunking principle */}
+          {currentStep === 1 && (
+            <div className="form-step active">
+              <h2 className="step-title">
+                <span className="step-number">01</span>
+                Personal Information
+              </h2>
+              <p className="step-description">Let's start with your basic information</p>
               
-              {signaturePreview && (
-                <div className="signature-preview">
-                  <img src={signaturePreview} alt="Signature Preview" />
+              <div className="form-grid">
+                <div className="form-group">
+                  <label htmlFor="firstName">
+                    First Name <span className="required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="firstName"
+                    {...register('firstName', { required: 'First name is required' })}
+                    className={errors.firstName ? 'error' : ''}
+                    placeholder="Enter your first name"
+                  />
+                  {errors.firstName && <span className="error-message">{errors.firstName.message}</span>}
                 </div>
-              )}
-            </div>
-          </div>
 
-          <button 
-            type="submit" 
-            className="submit-btn"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Processing...' : 'Complete Onboarding'}
-          </button>
+                <div className="form-group">
+                  <label htmlFor="lastName">
+                    Last Name <span className="required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="lastName"
+                    {...register('lastName', { required: 'Last name is required' })}
+                    className={errors.lastName ? 'error' : ''}
+                    placeholder="Enter your last name"
+                  />
+                  {errors.lastName && <span className="error-message">{errors.lastName.message}</span>}
+                </div>
+
+                <div className="form-group full-width">
+                  <label htmlFor="mobileNumber">
+                    Mobile Number <span className="required">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    id="mobileNumber"
+                    {...register('mobileNumber', { 
+                      required: 'Mobile number is required',
+                      pattern: {
+                        value: /^[+]?[\d\s\-()]+$/,
+                        message: 'Please enter a valid mobile number'
+                      }
+                    })}
+                    className={errors.mobileNumber ? 'error' : ''}
+                    placeholder="+1 (555) 123-4567"
+                  />
+                  {errors.mobileNumber && <span className="error-message">{errors.mobileNumber.message}</span>}
+                </div>
+              </div>
+
+              <div className="step-navigation">
+                <button type="button" className="btn-secondary" disabled>
+                  Previous
+                </button>
+                <button 
+                  type="button" 
+                  className="btn-primary"
+                  onClick={nextStep}
+                  disabled={!watchedValues.firstName || !watchedValues.lastName || !watchedValues.mobileNumber}
+                >
+                  Next Step
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Step 2: Business Information */}
+          {currentStep === 2 && (
+            <div className="form-step active">
+              <h2 className="step-title">
+                <span className="step-number">02</span>
+                Business Information
+              </h2>
+              <p className="step-description">Tell us about your business</p>
+              
+              <div className="form-grid">
+                <div className="form-group full-width">
+                  <label htmlFor="businessEmail">
+                    Business Email <span className="required">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    id="businessEmail"
+                    {...register('businessEmail', { 
+                      required: 'Business email is required',
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: 'Please enter a valid email address'
+                      }
+                    })}
+                    className={errors.businessEmail ? 'error' : ''}
+                    placeholder="your.email@company.com"
+                  />
+                  {errors.businessEmail && <span className="error-message">{errors.businessEmail.message}</span>}
+                </div>
+
+                <div className="form-group full-width">
+                  <label htmlFor="businessName">
+                    Business Name <span className="required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="businessName"
+                    {...register('businessName', { required: 'Business name is required' })}
+                    className={errors.businessName ? 'error' : ''}
+                    placeholder="Your Company Name"
+                  />
+                  {errors.businessName && <span className="error-message">{errors.businessName.message}</span>}
+                </div>
+              </div>
+
+              <div className="step-navigation">
+                <button type="button" className="btn-secondary" onClick={prevStep}>
+                  Previous
+                </button>
+                <button 
+                  type="button" 
+                  className="btn-primary"
+                  onClick={nextStep}
+                  disabled={!watchedValues.businessEmail || !watchedValues.businessName}
+                >
+                  Next Step
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Step 3: Legal Agreements and Signature */}
+          {currentStep === 3 && (
+            <div className="form-step active">
+              <h2 className="step-title">
+                <span className="step-number">03</span>
+                Legal Agreements & Signature
+              </h2>
+              <p className="step-description">Please review and agree to our terms, then provide your signature</p>
+              
+              {/* Legal Documents Section - Chunking and Clear Hierarchy */}
+              <div className="legal-section">
+                <h3 className="section-title">Legal Documents</h3>
+                <p className="section-description">
+                  Please review the following documents and check the boxes to indicate your agreement:
+                </p>
+                
+                <div className="legal-agreements">
+                  <div className="legal-item">
+                    <div className="checkbox-group">
+                      <input
+                        type="checkbox"
+                        id="privacyPolicy"
+                        {...register('privacyPolicy', { required: 'You must agree to the Privacy Policy' })}
+                        className={errors.privacyPolicy ? 'error' : ''}
+                      />
+                      <label htmlFor="privacyPolicy" className="checkbox-label">
+                        <span className="checkmark"></span>
+                        I have read and agree to the 
+                        <a href="/Privacy Policy.pdf" target="_blank" rel="noopener noreferrer" className="doc-link">
+                          Privacy Policy
+                        </a>
+                        <span className="required">*</span>
+                      </label>
+                    </div>
+                    {errors.privacyPolicy && <span className="error-message">{errors.privacyPolicy.message}</span>}
+                  </div>
+
+                  <div className="legal-item">
+                    <div className="checkbox-group">
+                      <input
+                        type="checkbox"
+                        id="termsConditions"
+                        {...register('termsConditions', { required: 'You must agree to the Terms & Conditions' })}
+                        className={errors.termsConditions ? 'error' : ''}
+                      />
+                      <label htmlFor="termsConditions" className="checkbox-label">
+                        <span className="checkmark"></span>
+                        I have read and agree to the 
+                        <a href="/AhumAI- T & C..pdf" target="_blank" rel="noopener noreferrer" className="doc-link">
+                          Terms & Conditions
+                        </a>
+                        <span className="required">*</span>
+                      </label>
+                    </div>
+                    {errors.termsConditions && <span className="error-message">{errors.termsConditions.message}</span>}
+                  </div>
+
+                  <div className="legal-item">
+                    <div className="checkbox-group">
+                      <input
+                        type="checkbox"
+                        id="supportAddendum"
+                        {...register('supportAddendum', { required: 'You must agree to the Support Addendum' })}
+                        className={errors.supportAddendum ? 'error' : ''}
+                      />
+                      <label htmlFor="supportAddendum" className="checkbox-label">
+                        <span className="checkmark"></span>
+                        I have read and agree to the 
+                        <a href="/Support Addendum- AhumAI.pdf" target="_blank" rel="noopener noreferrer" className="doc-link">
+                          Support Addendum
+                        </a>
+                        <span className="required">*</span>
+                      </label>
+                    </div>
+                    {errors.supportAddendum && <span className="error-message">{errors.supportAddendum.message}</span>}
+                  </div>
+
+                  <div className="legal-item">
+                    <div className="checkbox-group">
+                      <input
+                        type="checkbox"
+                        id="invoiceTerms"
+                        {...register('invoiceTerms', { required: 'You must agree to the Invoice Terms' })}
+                        className={errors.invoiceTerms ? 'error' : ''}
+                      />
+                      <label htmlFor="invoiceTerms" className="checkbox-label">
+                        <span className="checkmark"></span>
+                        I have read and agree to the 
+                        <a href="/Invoice- AhumAI.docx" target="_blank" rel="noopener noreferrer" className="doc-link">
+                          Invoice Terms
+                        </a>
+                        <span className="required">*</span>
+                      </label>
+                    </div>
+                    {errors.invoiceTerms && <span className="error-message">{errors.invoiceTerms.message}</span>}
+                  </div>
+                </div>
+              </div>
+
+              {/* Signature Section */}
+              <div className="signature-section">
+                <h3 className="section-title">Digital Signature</h3>
+                <p className="section-description">
+                  Upload your signature to complete the onboarding process
+                </p>
+                
+                <div className="form-group full-width">
+                  <label htmlFor="signature" className="file-label">
+                    Upload Signature <span className="required">*</span>
+                  </label>
+                  <div className="file-upload-container">
+                    <input
+                      type="file"
+                      id="signature"
+                      accept="image/*"
+                      {...register('signature', { required: 'Signature is required' })}
+                      onChange={handleSignatureUpload}
+                      className={`file-input ${errors.signature ? 'error' : ''}`}
+                    />
+                    <div className="file-upload-display">
+                      {signaturePreview ? (
+                        <div className="signature-preview">
+                          <img src={signaturePreview} alt="Signature Preview" />
+                          <span className="signature-status">✓ Signature uploaded</span>
+                        </div>
+                      ) : (
+                        <div className="file-placeholder">
+                          <span className="upload-icon">📝</span>
+                          <span>Click to upload your signature</span>
+                          <span className="file-hint">Supported formats: JPG, PNG, GIF</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  {errors.signature && <span className="error-message">{errors.signature.message}</span>}
+                </div>
+              </div>
+
+              <div className="step-navigation">
+                <button type="button" className="btn-secondary" onClick={prevStep}>
+                  Previous
+                </button>
+                <button 
+                  type="submit" 
+                  className="btn-submit"
+                  disabled={isSubmitting || !allFieldsFilled || !watchedValues.privacyPolicy || !watchedValues.termsConditions || !watchedValues.supportAddendum || !watchedValues.invoiceTerms}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <span className="loading-spinner"></span>
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <span className="submit-icon">🚀</span>
+                      Complete Onboarding
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          )}
         </form>
       </div>
 
@@ -261,17 +509,27 @@ const ClientOnboarding: React.FC = () => {
               </div>
             </div>
 
+            <div className="legal-confirmations">
+              <h2>Legal Agreements Confirmed</h2>
+              <div className="agreement-item">✓ Privacy Policy - Agreed</div>
+              <div className="agreement-item">✓ Terms & Conditions - Agreed</div>
+              <div className="agreement-item">✓ Support Addendum - Agreed</div>
+              <div className="agreement-item">✓ Invoice Terms - Agreed</div>
+            </div>
+
             {submittedData.signatureUrl && (
               <div className="signature-section">
                 <h2>Digital Signature</h2>
                 <div className="signature-container">
                   <img src={submittedData.signatureUrl} alt="Client Signature" />
+                  <p>Signature Date: {new Date(submittedData.submissionDate).toLocaleDateString()}</p>
                 </div>
               </div>
             )}
 
             <div className="pdf-footer">
               <p>This document confirms the successful onboarding of the above client to AhumAI services.</p>
+              <p>All legal agreements have been reviewed and accepted by the client.</p>
               <p>Generated on: {new Date().toLocaleString()}</p>
               <hr />
               <p className="company-info">
