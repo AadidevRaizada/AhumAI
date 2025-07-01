@@ -14,7 +14,6 @@ interface ClientData {
   privacyPolicy: boolean;
   termsConditions: boolean;
   supportAddendum: boolean;
-  invoiceTerms: boolean;
 }
 
 const AdminDashboard: React.FC = () => {
@@ -28,7 +27,7 @@ const AdminDashboard: React.FC = () => {
   }, []);
 
   const loadClients = () => {
-    const storedClients = localStorage.getItem('ahumai_clients');
+    const storedClients = sessionStorage.getItem('ahumai_clients');
     if (storedClients) {
       setClients(JSON.parse(storedClients));
     }
@@ -36,7 +35,7 @@ const AdminDashboard: React.FC = () => {
 
   const clearAllData = () => {
     if (window.confirm('Are you sure you want to clear all client data? This action cannot be undone.')) {
-      localStorage.removeItem('ahumai_clients');
+      sessionStorage.removeItem('ahumai_clients');
       setClients([]);
       setSelectedClient(null);
     }
@@ -86,7 +85,7 @@ const AdminDashboard: React.FC = () => {
   const complianceRate = clients.length > 0 
     ? ((clients.filter(client => 
         client.privacyPolicy && client.termsConditions && 
-        client.supportAddendum && client.invoiceTerms
+        client.supportAddendum
       ).length / clients.length) * 100).toFixed(1)
     : '0';
 
@@ -130,7 +129,11 @@ const AdminDashboard: React.FC = () => {
                 <h3>Latest Submission</h3>
                 <p className="stat-text">
                   {clients.length > 0 
-                    ? new Date(Math.max(...clients.map(c => new Date(c.submissionDate).getTime()))).toLocaleDateString()
+                    ? new Date(Math.max(...clients.map(c => new Date(c.submissionDate).getTime()))).toLocaleDateString('en-US', { 
+                      month: '2-digit', 
+                      day: '2-digit', 
+                      year: '2-digit' 
+                    })
                     : 'No submissions yet'
                   }
                 </p>
@@ -237,7 +240,7 @@ const AdminDashboard: React.FC = () => {
                         <td>
                           <div className="compliance-status">
                             {client.privacyPolicy && client.termsConditions && 
-                             client.supportAddendum && client.invoiceTerms ? (
+                             client.supportAddendum ? (
                               <span className="status-complete">✅ Complete</span>
                             ) : (
                               <span className="status-incomplete">⚠️ Incomplete</span>
@@ -246,7 +249,11 @@ const AdminDashboard: React.FC = () => {
                         </td>
                         <td>
                           <span className="submission-date">
-                            {new Date(client.submissionDate).toLocaleDateString()}
+                            {new Date(client.submissionDate).toLocaleDateString('en-US', { 
+                              month: '2-digit', 
+                              day: '2-digit', 
+                              year: '2-digit' 
+                            })}
                           </span>
                         </td>
                         <td>
@@ -351,14 +358,6 @@ const AdminDashboard: React.FC = () => {
                       <span>Support Addendum</span>
                       {selectedClient.supportAddendum && <span className="agreed-label">Agreed</span>}
                     </div>
-                    
-                    <div className={`compliance-item ${selectedClient.invoiceTerms ? 'agreed' : 'not-agreed'}`}>
-                      <span className="compliance-icon">
-                        {selectedClient.invoiceTerms ? '✅' : '❌'}
-                      </span>
-                      <span>Invoice Terms</span>
-                      {selectedClient.invoiceTerms && <span className="agreed-label">Agreed</span>}
-                    </div>
                   </div>
                 </div>
 
@@ -372,7 +371,13 @@ const AdminDashboard: React.FC = () => {
                     <div className="signature-display">
                       <img src={selectedClient.signatureUrl} alt="Client Signature" />
                       <p className="signature-date">
-                        Signed on: {new Date(selectedClient.submissionDate).toLocaleString()}
+                        Signed on: {new Date(selectedClient.submissionDate).toLocaleString('en-US', { 
+                          month: '2-digit', 
+                          day: '2-digit', 
+                          year: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
                       </p>
                     </div>
                   </div>
@@ -387,7 +392,13 @@ const AdminDashboard: React.FC = () => {
                   <div className="detail-grid">
                     <div className="client-detail">
                       <strong>Submission Date:</strong>
-                      <span>{new Date(selectedClient.submissionDate).toLocaleString()}</span>
+                      <span>{new Date(selectedClient.submissionDate).toLocaleString('en-US', { 
+                        month: '2-digit', 
+                        day: '2-digit', 
+                        year: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}</span>
                     </div>
                     <div className="client-detail">
                       <strong>Client ID:</strong>

@@ -15,7 +15,6 @@ interface ClientFormData {
   privacyPolicy: boolean;
   termsConditions: boolean;
   supportAddendum: boolean;
-  invoiceTerms: boolean;
 }
 
 interface ClientData extends Omit<ClientFormData, 'signature'> {
@@ -24,12 +23,85 @@ interface ClientData extends Omit<ClientFormData, 'signature'> {
   clientId: string;
 }
 
+interface SuccessModalProps {
+  isOpen: boolean;
+  clientData: ClientData | null;
+  onClose: () => void;
+  onEmailSend: (email: string) => void;
+}
+
+const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, clientData, onClose, onEmailSend }) => {
+  const [email, setEmail] = useState('');
+  const [isEmailSending, setIsEmailSending] = useState(false);
+
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email) {
+      setIsEmailSending(true);
+      await onEmailSend(email);
+      setIsEmailSending(false);
+      setEmail('');
+    }
+  };
+
+  if (!isOpen || !clientData) return null;
+
+  return (
+    <div className="modal-overlay">
+      <div className="success-modal">
+        <div className="modal-header">
+          <h2>🎉 Congratulations!</h2>
+          <button className="close-btn" onClick={onClose}>&times;</button>
+        </div>
+        <div className="modal-content">
+          <div className="success-message">
+            <h3>Welcome to AhumAI family, {clientData.firstName}!</h3>
+            <p>Your onboarding is complete successfully.</p>
+            <div className="client-id-display">
+              <strong>Your Client ID: {clientData.clientId}</strong>
+            </div>
+            <p>Your confirmation document has been generated and downloaded automatically.</p>
+          </div>
+          
+          <div className="email-section">
+            <h4>📧 Email Confirmation</h4>
+            <p>Enter your email address to receive a copy of your confirmation document:</p>
+            <form onSubmit={handleEmailSubmit} className="email-form">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email address"
+                required
+                className="email-input"
+              />
+              <button 
+                type="submit" 
+                disabled={isEmailSending}
+                className="email-send-btn"
+              >
+                {isEmailSending ? 'Sending...' : 'Send Email'}
+              </button>
+            </form>
+          </div>
+        </div>
+        <div className="modal-footer">
+          <button className="btn-primary" onClick={onClose}>
+            Continue
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const ClientOnboarding: React.FC = () => {
   const { register, handleSubmit, formState: { errors }, reset, watch } = useForm<ClientFormData>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [signaturePreview, setSignaturePreview] = useState<string>('');
   const [submittedData, setSubmittedData] = useState<ClientData | null>(null);
   const [currentStep, setCurrentStep] = useState(1);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const pdfRef = useRef<HTMLDivElement>(null);
 
   // Watch form values for progressive disclosure (UX principle)
@@ -53,10 +125,10 @@ const ClientOnboarding: React.FC = () => {
     return 'CL' + Date.now().toString(36).toUpperCase();
   };
 
-  const saveToLocalStorage = (data: ClientData) => {
-    const existingClients = JSON.parse(localStorage.getItem('ahumai_clients') || '[]');
+  const saveToSessionStorage = (data: ClientData) => {
+    const existingClients = JSON.parse(sessionStorage.getItem('ahumai_clients') || '[]');
     existingClients.push(data);
-    localStorage.setItem('ahumai_clients', JSON.stringify(existingClients));
+    sessionStorage.setItem('ahumai_clients', JSON.stringify(existingClients));
   };
 
   const generatePDF = async (clientData: ClientData) => {
@@ -66,7 +138,8 @@ const ClientOnboarding: React.FC = () => {
       const canvas = await html2canvas(pdfRef.current, {
         scale: 2,
         useCORS: true,
-        allowTaint: true
+        allowTaint: true,
+        backgroundColor: '#ffffff'
       });
 
       const imgData = canvas.toDataURL('image/png');
@@ -98,6 +171,24 @@ const ClientOnboarding: React.FC = () => {
     }
   };
 
+  const sendEmailConfirmation = async (email: string) => {
+    // Simulate email sending - In production, this would call your email service
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        console.log(`Email sent to: ${email}`);
+        // Here you would integrate with your email service (SendGrid, AWS SES, etc.)
+        alert(`Confirmation email sent to ${email}!`);
+        
+        // Redirect to main website after email is sent
+        setTimeout(() => {
+          window.location.href = 'https://ahumai.co.in';
+        }, 1000);
+        
+        resolve(true);
+      }, 2000);
+    });
+  };
+
   const onSubmit = async (data: ClientFormData) => {
     setIsSubmitting(true);
 
@@ -109,8 +200,8 @@ const ClientOnboarding: React.FC = () => {
         clientId: generateClientId()
       };
 
-      // Save to local storage
-      saveToLocalStorage(clientData);
+      // Save to session storage
+      saveToSessionStorage(clientData);
       
       // Set submitted data for PDF preview
       setSubmittedData(clientData);
@@ -120,14 +211,13 @@ const ClientOnboarding: React.FC = () => {
         await generatePDF(clientData);
         setIsSubmitting(false);
         
+        // Show success modal instead of alert
+        setShowSuccessModal(true);
+        
         // Reset form
         reset();
         setSignaturePreview('');
         setCurrentStep(1);
-        
-        // Peak-End Rule: Positive completion message
-        const completionMessage = `🎉 Welcome to AhumAI family, ${clientData.firstName}! Your onboarding is complete. Your client ID is ${clientData.clientId}. We've sent your confirmation document - check your downloads!`;
-        alert(completionMessage);
       }, 500);
 
     } catch (error) {
@@ -135,6 +225,11 @@ const ClientOnboarding: React.FC = () => {
       setIsSubmitting(false);
       alert('Error submitting form. Please try again.');
     }
+  };
+
+  const handleModalClose = () => {
+    setShowSuccessModal(false);
+    setSubmittedData(null);
   };
 
   // Step navigation for better UX (Chunking principle)
@@ -151,6 +246,7 @@ const ClientOnboarding: React.FC = () => {
 
   return (
     <div className="client-onboarding">
+      <div className="tech-background"></div>
       <div className="onboarding-container">
         <div className="onboarding-header">
           <div className="logo-section">
@@ -388,26 +484,6 @@ const ClientOnboarding: React.FC = () => {
                     </div>
                     {errors.supportAddendum && <span className="error-message">{errors.supportAddendum.message}</span>}
                   </div>
-
-                  <div className="legal-item">
-                    <div className="checkbox-group">
-                      <input
-                        type="checkbox"
-                        id="invoiceTerms"
-                        {...register('invoiceTerms', { required: 'You must agree to the Invoice Terms' })}
-                        className={errors.invoiceTerms ? 'error' : ''}
-                      />
-                      <label htmlFor="invoiceTerms" className="checkbox-label">
-                        <span className="checkmark"></span>
-                        I have read and agree to the 
-                        <a href="/Invoice- AhumAI.docx" target="_blank" rel="noopener noreferrer" className="doc-link">
-                          Invoice Terms
-                        </a>
-                        <span className="required">*</span>
-                      </label>
-                    </div>
-                    {errors.invoiceTerms && <span className="error-message">{errors.invoiceTerms.message}</span>}
-                  </div>
                 </div>
               </div>
 
@@ -457,7 +533,7 @@ const ClientOnboarding: React.FC = () => {
                 <button 
                   type="submit" 
                   className="btn-submit"
-                  disabled={isSubmitting || !allFieldsFilled || !watchedValues.privacyPolicy || !watchedValues.termsConditions || !watchedValues.supportAddendum || !watchedValues.invoiceTerms}
+                  disabled={isSubmitting || !allFieldsFilled || !watchedValues.privacyPolicy || !watchedValues.termsConditions || !watchedValues.supportAddendum}
                 >
                   {isSubmitting ? (
                     <>
@@ -477,14 +553,32 @@ const ClientOnboarding: React.FC = () => {
         </form>
       </div>
 
+      {/* Success Modal */}
+      <SuccessModal
+        isOpen={showSuccessModal}
+        clientData={submittedData}
+        onClose={handleModalClose}
+        onEmailSend={sendEmailConfirmation}
+      />
+
       {/* PDF Preview Template - Hidden from view but used for PDF generation */}
       {submittedData && (
         <div ref={pdfRef} className="pdf-template">
           <div className="pdf-header">
-            <h1>AhumAI - Client Confirmation</h1>
+            <div className="logo-container">
+              <img src="/ahumai_logo.svg" alt="AhumAI Logo" className="pdf-logo" />
+              <div className="logo-text">
+                <h1>AhumAI</h1>
+                <p className="tagline">Create for More</p>
+              </div>
+            </div>
             <div className="pdf-meta">
               <p><strong>Client ID:</strong> {submittedData.clientId}</p>
-              <p><strong>Date:</strong> {new Date(submittedData.submissionDate).toLocaleDateString()}</p>
+              <p><strong>Date:</strong> {new Date(submittedData.submissionDate).toLocaleDateString('en-US', { 
+                month: '2-digit', 
+                day: '2-digit', 
+                year: '2-digit' 
+              })}</p>
             </div>
           </div>
 
@@ -514,7 +608,6 @@ const ClientOnboarding: React.FC = () => {
               <div className="agreement-item">✓ Privacy Policy - Agreed</div>
               <div className="agreement-item">✓ Terms & Conditions - Agreed</div>
               <div className="agreement-item">✓ Support Addendum - Agreed</div>
-              <div className="agreement-item">✓ Invoice Terms - Agreed</div>
             </div>
 
             {submittedData.signatureUrl && (
@@ -522,7 +615,11 @@ const ClientOnboarding: React.FC = () => {
                 <h2>Digital Signature</h2>
                 <div className="signature-container">
                   <img src={submittedData.signatureUrl} alt="Client Signature" />
-                  <p>Signature Date: {new Date(submittedData.submissionDate).toLocaleDateString()}</p>
+                  <p>Signature Date: {new Date(submittedData.submissionDate).toLocaleDateString('en-US', { 
+                    month: '2-digit', 
+                    day: '2-digit', 
+                    year: '2-digit' 
+                  })}</p>
                 </div>
               </div>
             )}
@@ -530,13 +627,19 @@ const ClientOnboarding: React.FC = () => {
             <div className="pdf-footer">
               <p>This document confirms the successful onboarding of the above client to AhumAI services.</p>
               <p>All legal agreements have been reviewed and accepted by the client.</p>
-              <p>Generated on: {new Date().toLocaleString()}</p>
+              <p>Generated on: {new Date().toLocaleString('en-US', { 
+                month: '2-digit', 
+                day: '2-digit', 
+                year: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+              })}</p>
               <hr />
-              <p className="company-info">
+              <div className="company-info">
                 <strong>AhumAI</strong><br />
                 Advanced AI Solutions<br />
                 www.ahumai.co.in
-              </p>
+              </div>
             </div>
           </div>
         </div>
