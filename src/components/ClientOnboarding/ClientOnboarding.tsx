@@ -5,6 +5,7 @@ import html2canvas from 'html2canvas';
 import { 
   supabase, 
   getCurrentUser, 
+  getCurrentSession,
   getClientData, 
   insertClientData, 
   updateClientData,
@@ -238,7 +239,11 @@ const ClientOnboarding: React.FC = () => {
   };
 
   const onSubmit = async (data: ClientFormData) => {
-    if (!user) {
+    // Double-check authentication
+    const { user: currentUser, error: userError } = await getCurrentUser();
+    
+    if (userError || !currentUser) {
+      console.error('Authentication error:', userError);
       setShowAuthModal(true);
       return;
     }
@@ -246,8 +251,14 @@ const ClientOnboarding: React.FC = () => {
     setIsSubmitting(true);
 
     try {
+      // Verify session is active
+      const { session } = await getCurrentSession();
+      if (!session) {
+        throw new Error('No active session');
+      }
+
       const clientDataToSave: Omit<ClientData, 'id' | 'client_id' | 'submission_date' | 'updated_at'> = {
-        user_id: user.id,
+        user_id: currentUser.id,
         first_name: data.firstName,
         last_name: data.lastName,
         mobile_number: data.mobileNumber,
@@ -266,12 +277,24 @@ const ClientOnboarding: React.FC = () => {
       if (existingClientData) {
         // Update existing record
         const { data: updatedData, error } = await updateClientData(existingClientData.id!, clientDataToSave);
-        if (error) throw error;
+        if (error) {
+          console.error('Update error:', error);
+          throw error;
+        }
         savedClientData = updatedData;
       } else {
         // Insert new record
         const { data: newData, error } = await insertClientData(clientDataToSave as ClientData);
-        if (error) throw error;
+        if (error) {
+          console.error('Insert error:', error);
+          // Provide more specific error messages
+          if (error.code === '42501') {
+            throw new Error('Permission denied. Please sign out and sign back in, then try again.');
+          } else if (error.code === '23505') {
+            throw new Error('A client with this email already exists.');
+          }
+          throw error;
+        }
         savedClientData = newData;
       }
 
@@ -292,10 +315,13 @@ const ClientOnboarding: React.FC = () => {
         setCurrentStep(1);
       }, 500);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error submitting form:', error);
       setIsSubmitting(false);
-      alert('Error submitting form. Please try again.');
+      
+      // Show more descriptive error messages
+      const errorMessage = error.message || 'Error submitting form. Please try again.';
+      alert(`CLIENT.AHUMAI.CO.IN SAYS\n${errorMessage}`);
     }
   };
 
