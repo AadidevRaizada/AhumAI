@@ -458,6 +458,27 @@
     right: 70px;
     margin-top: 0;
   }
+
+  .main-header {
+    padding: 15px 20px;
+  }
+
+  .squid-logo .shape {
+    width: 16px;
+    height: 16px;
+    border-width: 1.5px;
+  }
+
+  .squid-logo .triangle {
+    border-left-width: 10px;
+    border-right-width: 10px;
+    border-bottom-width: 16px;
+  }
+
+  .squid-logo .square {
+    width: 14px;
+    height: 14px;
+  }
 }
 
 /* Auth Styles */

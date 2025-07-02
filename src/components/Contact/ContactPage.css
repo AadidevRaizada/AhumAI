@@ -327,45 +327,32 @@
 }
 
 @media (max-width: 768px) {
-  .contact-content {
-    grid-template-columns: 1fr;
+  .contact-container {
+    padding: 60px 15px;
   }
-  
+
   .section-title {
     font-size: 1.5rem;
+    letter-spacing: 2px;
   }
-  
+
   .title-line {
-    width: 30px;
+    width: 40px;
   }
-  
+
   .section-subtitle {
     font-size: 1rem;
-    padding: 0 15px;
+    padding: 0 10px;
   }
-  
-  .contact-info {
-    padding: 25px;
+
+  .contact-content {
+    flex-direction: column;
+    gap: 40px;
   }
-  
-  .info-title {
-    font-size: 1.5rem;
-  }
-  
-  .info-text {
-    font-size: 0.95rem;
-  }
-  
-  .detail-item {
-    font-size: 0.9rem;
-  }
-  
-  .office-hours {
-    font-size: 0.9rem;
-  }
-  
-  .office-hours h4 {
-    font-size: 1.1rem;
+
+  .contact-info,
+  .contact-form {
+    width: 100%;
   }
 }
 

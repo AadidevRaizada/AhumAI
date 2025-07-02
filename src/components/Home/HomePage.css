@@ -375,12 +375,16 @@
   }
   
   .cta-button {
+    padding: 12px 24px;
     font-size: 0.9rem;
-    padding: 10px 25px;
   }
   
   .hero-image {
-    height: 60%;
+    height: 60vh;
+  }
+  
+  .hero-content {
+    bottom: 8%;
   }
   
   .section-title {
