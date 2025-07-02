@@ -1,16 +1,27 @@
 /* Global styles */
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap');
 
 :root {
-  --primary-color: #0ff;
-  --secondary-color: #f0f;
-  --accent-color: #0078ff;
-  --danger-color: #ff003c;
-  --background-dark: #050510;
-  --background-darker: #030308;
-  --text-primary: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --border-color: rgba(0, 255, 255, 0.2);
+  /* Squid Game Color Palette */
+  --squid-green: #16423C;
+  --squid-pink: #E91E63;
+  --squid-orange: #F7931E;
+  --squid-black: #000000;
+  --squid-white: #FFFFFF;
+  --squid-dark-green: #0D2B26;
+  --squid-light-green: #1F5449;
+  --squid-red: #DC143C;
+  
+  /* Updated theme colors */
+  --primary-color: var(--squid-pink);
+  --secondary-color: var(--squid-green);
+  --accent-color: var(--squid-orange);
+  --danger-color: var(--squid-red);
+  --background-dark: var(--squid-black);
+  --background-darker: var(--squid-dark-green);
+  --text-primary: var(--squid-white);
+  --text-secondary: rgba(255, 255, 255, 0.8);
+  --border-color: var(--squid-pink);
 }
 
 * {
@@ -36,70 +47,154 @@ h1, h2, h3, h4, h5, h6 {
   min-height: 100vh;
 }
 
-/* Loading Screen */
+/* Squid Game Loading Screen */
 .loading-screen {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: var(--background-darker);
+  background: linear-gradient(135deg, var(--squid-black) 0%, var(--squid-dark-green) 100%);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  overflow: hidden;
+}
+
+.loading-screen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(233, 30, 99, 0.03) 2px,
+      rgba(233, 30, 99, 0.03) 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(22, 66, 60, 0.03) 2px,
+      rgba(22, 66, 60, 0.03) 4px
+    );
+  animation: scanlines 2s linear infinite;
 }
 
 .loader {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.loader-circle {
-  width: 60px;
-  height: 60px;
-  border: 2px solid transparent;
-  border-top-color: var(--primary-color);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 20px;
   position: relative;
+  z-index: 2;
 }
 
-.loader-circle::before,
-.loader-circle::after {
-  content: '';
-  position: absolute;
-  border-radius: 50%;
+/* Squid Game Style Geometric Loader */
+.loader-circle {
+  width: 100px;
+  height: 100px;
+  position: relative;
+  margin-bottom: 30px;
+  animation: float 3s ease-in-out infinite;
 }
 
 .loader-circle::before {
-  top: 5px;
-  left: 5px;
-  right: 5px;
-  bottom: 5px;
-  border: 2px solid transparent;
-  border-right-color: var(--secondary-color);
-  animation: spin 0.8s linear infinite reverse;
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80px;
+  height: 80px;
+  transform: translate(-50%, -50%);
+  border: 3px solid var(--squid-pink);
+  border-radius: 0;
+  animation: squareRotate 2s linear infinite;
+  box-shadow: 
+    0 0 20px rgba(233, 30, 99, 0.5),
+    inset 0 0 20px rgba(233, 30, 99, 0.1);
 }
 
 .loader-circle::after {
-  top: 12px;
-  left: 12px;
-  right: 12px;
-  bottom: 12px;
-  border: 2px solid transparent;
-  border-bottom-color: var(--accent-color);
-  animation: spin 1.2s linear infinite;
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  background: var(--squid-green);
+  transform: translate(-50%, -50%) rotate(45deg);
+  animation: diamondPulse 1.5s ease-in-out infinite alternate;
+  box-shadow: 0 0 15px rgba(22, 66, 60, 0.8);
+}
+
+/* Triangle elements around the loader */
+.loader-circle .triangle {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 14px solid var(--squid-orange);
+  animation: triangleOrbit 3s linear infinite;
+}
+
+.loader-circle .triangle:nth-child(1) {
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation-delay: 0s;
+}
+
+.loader-circle .triangle:nth-child(2) {
+  top: 50%;
+  right: -10px;
+  transform: translateY(-50%) rotate(90deg);
+  animation-delay: 0.75s;
+}
+
+.loader-circle .triangle:nth-child(3) {
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%) rotate(180deg);
+  animation-delay: 1.5s;
+}
+
+.loader-circle .triangle:nth-child(4) {
+  top: 50%;
+  left: -10px;
+  transform: translateY(-50%) rotate(270deg);
+  animation-delay: 2.25s;
 }
 
 .loader-text {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 1rem;
-  letter-spacing: 5px;
-  animation: pulse 1.5s infinite ease-in-out;
-  color: var(--primary-color);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: 8px;
+  color: var(--squid-white);
+  text-shadow: 
+    0 0 10px var(--squid-pink),
+    0 0 20px var(--squid-pink),
+    0 0 30px var(--squid-pink);
+  animation: textGlow 2s ease-in-out infinite alternate;
+  position: relative;
+}
+
+.loader-text::before {
+  content: 'AHUMAI';
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: var(--squid-pink);
+  animation: textFlicker 0.1s infinite linear alternate;
+  opacity: 0.7;
+  transform: translate(2px, 2px);
 }
 
 /* Main Content */
@@ -125,17 +220,62 @@ h1, h2, h3, h4, h5, h6 {
   display: none;
 }
 
-/* Animations */
-@keyframes spin {
-  to { transform: rotate(360deg); }
+/* Squid Game Animations */
+@keyframes squareRotate {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+@keyframes diamondPulse {
+  0% { 
+    transform: translate(-50%, -50%) rotate(45deg) scale(1);
+    background: var(--squid-green);
+  }
+  100% { 
+    transform: translate(-50%, -50%) rotate(45deg) scale(1.2);
+    background: var(--squid-pink);
+  }
 }
 
-/* Add scan lines effect to the whole page */
+@keyframes triangleOrbit {
+  0% { opacity: 1; transform: scale(1); }
+  25% { opacity: 0.7; transform: scale(1.2); }
+  50% { opacity: 1; transform: scale(1); }
+  75% { opacity: 0.7; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes textGlow {
+  0% { 
+    text-shadow: 
+      0 0 10px var(--squid-pink),
+      0 0 20px var(--squid-pink),
+      0 0 30px var(--squid-pink);
+  }
+  100% { 
+    text-shadow: 
+      0 0 20px var(--squid-orange),
+      0 0 30px var(--squid-orange),
+      0 0 40px var(--squid-orange);
+  }
+}
+
+@keyframes textFlicker {
+  0% { opacity: 0.7; }
+  100% { opacity: 0.3; }
+}
+
+@keyframes scanlines {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(4px); }
+}
+
+/* Add geometric pattern overlay to the whole page */
 .app::before {
   content: '';
   position: fixed;
@@ -143,18 +283,16 @@ h1, h2, h3, h4, h5, h6 {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    to bottom,
-    transparent 50%,
-    rgba(0, 0, 0, 0.05) 50%
-  );
-  background-size: 100% 4px;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(233, 30, 99, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(22, 66, 60, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(247, 147, 30, 0.02) 0%, transparent 50%);
   z-index: 1000;
   pointer-events: none;
-  opacity: 0.2;
+  opacity: 0.6;
 }
 
-/* Add a vignette effect */
+/* Add Squid Game style border effects */
 .app::after {
   content: '';
   position: fixed;
@@ -162,13 +300,12 @@ h1, h2, h3, h4, h5, h6 {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(
-    circle at center,
-    transparent 50%,
-    rgba(0, 0, 0, 0.4) 100%
-  );
+  background: 
+    linear-gradient(0deg, transparent 95%, var(--squid-pink) 95%, var(--squid-pink) 100%),
+    linear-gradient(90deg, transparent 95%, var(--squid-green) 95%, var(--squid-green) 100%);
   z-index: 999;
   pointer-events: none;
+  opacity: 0.3;
 }
 
 /* Responsive Design */
@@ -177,5 +314,25 @@ h1, h2, h3, h4, h5, h6 {
     flex-direction: column;
     gap: 15px;
     text-align: center;
+  }
+  
+  .loader-text {
+    font-size: 2rem;
+    letter-spacing: 4px;
+  }
+  
+  .loader-circle {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .loader-circle::before {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .loader-circle::after {
+    width: 30px;
+    height: 30px;
   }
 }

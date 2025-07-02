@@ -257,6 +257,11 @@ const ClientOnboarding: React.FC = () => {
         throw new Error('No active session');
       }
 
+      // Debug logging
+      console.log('Current user:', currentUser);
+      console.log('User ID:', currentUser.id);
+      console.log('Session:', session);
+
       const clientDataToSave: Omit<ClientData, 'id' | 'client_id' | 'submission_date' | 'updated_at'> = {
         user_id: currentUser.id,
         first_name: data.firstName,
@@ -351,6 +356,22 @@ const ClientOnboarding: React.FC = () => {
     }
   };
 
+  const handleSignOut = async () => {
+    try {
+      const { error } = await signOut();
+      if (error) {
+        console.error('Sign out error:', error);
+        alert('Error signing out. Please try again.');
+      } else {
+        // Redirect to home page or refresh
+        window.location.href = '/';
+      }
+    } catch (error) {
+      console.error('Sign out error:', error);
+      alert('Error signing out. Please try again.');
+    }
+  };
+
   // Step navigation for better UX (Chunking principle)
   const nextStep = () => {
     if (currentStep < 3) setCurrentStep(currentStep + 1);
@@ -427,7 +448,7 @@ const ClientOnboarding: React.FC = () => {
             </div>
             <div className="user-info">
               <span>Welcome, {user?.email}</span>
-              <button onClick={() => signOut()} className="sign-out-btn">Sign Out</button>
+              <button onClick={handleSignOut} className="sign-out-btn">Sign Out</button>
             </div>
           </div>
           <p>Join the AhumAI family in just 3 simple steps</p>
