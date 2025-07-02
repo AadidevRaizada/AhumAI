@@ -1,7 +1,18 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { 
+  supabase, 
+  getCurrentUser, 
+  getClientData, 
+  insertClientData, 
+  updateClientData,
+  signInWithGoogle,
+  signInWithGitHub,
+  signOut,
+  ClientData
+} from '../../lib/supabase';
 import './ClientOnboarding.css';
 
 interface ClientFormData {
@@ -15,12 +26,6 @@ interface ClientFormData {
   privacyPolicy: boolean;
   termsConditions: boolean;
   supportAddendum: boolean;
-}
-
-interface ClientData extends Omit<ClientFormData, 'signature'> {
-  signatureUrl?: string;
-  submissionDate: string;
-  clientId: string;
 }
 
 interface SuccessModalProps {
@@ -55,10 +60,10 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, clientData, onClose
         </div>
         <div className="modal-content">
           <div className="success-message">
-            <h3>Welcome to AhumAI family, {clientData.firstName}!</h3>
+            <h3>Welcome to AhumAI family, {clientData.first_name}!</h3>
             <p>Your onboarding is complete successfully.</p>
             <div className="client-id-display">
-              <strong>Your Client ID: {clientData.clientId}</strong>
+              <strong>Your Client ID: {clientData.client_id}</strong>
             </div>
             <p>Your confirmation document has been generated and downloaded automatically.</p>
           </div>
@@ -87,7 +92,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, clientData, onClose
         </div>
         <div className="modal-footer">
           <button className="btn-primary" onClick={onClose}>
-            Continue
+            Go to Dashboard
           </button>
         </div>
       </div>
@@ -96,12 +101,16 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, clientData, onClose
 };
 
 const ClientOnboarding: React.FC = () => {
-  const { register, handleSubmit, formState: { errors }, reset, watch } = useForm<ClientFormData>();
+  const { register, handleSubmit, formState: { errors }, reset, watch, setValue } = useForm<ClientFormData>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [signaturePreview, setSignaturePreview] = useState<string>('');
   const [submittedData, setSubmittedData] = useState<ClientData | null>(null);
   const [currentStep, setCurrentStep] = useState(1);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [existingClientData, setExistingClientData] = useState<ClientData | null>(null);
   const pdfRef = useRef<HTMLDivElement>(null);
 
   // Watch form values for progressive disclosure (UX principle)
@@ -109,6 +118,55 @@ const ClientOnboarding: React.FC = () => {
   const allFieldsFilled = watchedValues.firstName && watchedValues.lastName && 
                          watchedValues.mobileNumber && watchedValues.businessEmail && 
                          watchedValues.businessName && signaturePreview;
+
+  useEffect(() => {
+    checkAuthAndLoadData();
+  }, []);
+
+  const checkAuthAndLoadData = async () => {
+    try {
+      const { user: currentUser, error: userError } = await getCurrentUser();
+      
+      if (userError || !currentUser) {
+        setShowAuthModal(true);
+        setIsLoading(false);
+        return;
+      }
+
+      setUser(currentUser);
+
+      // Check if user already has client data
+      const { data: clientInfo, error: clientError } = await getClientData(currentUser.id);
+      
+      if (clientError) {
+        console.error('Error loading client data:', clientError);
+      } else if (clientInfo) {
+        if (clientInfo.is_onboarding_complete) {
+          // Redirect to dashboard if onboarding is complete
+          window.location.href = '/client-dashboard';
+          return;
+        } else {
+          // Pre-fill form with existing data
+          setExistingClientData(clientInfo);
+          setValue('firstName', clientInfo.first_name);
+          setValue('lastName', clientInfo.last_name);
+          setValue('mobileNumber', clientInfo.mobile_number);
+          setValue('businessEmail', clientInfo.business_email);
+          setValue('businessName', clientInfo.business_name);
+          setValue('privacyPolicy', clientInfo.privacy_policy);
+          setValue('termsConditions', clientInfo.terms_conditions);
+          setValue('supportAddendum', clientInfo.support_addendum);
+          if (clientInfo.signature_url) {
+            setSignaturePreview(clientInfo.signature_url);
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Error checking auth:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSignatureUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -119,16 +177,6 @@ const ClientOnboarding: React.FC = () => {
       };
       reader.readAsDataURL(file);
     }
-  };
-
-  const generateClientId = () => {
-    return 'CL' + Date.now().toString(36).toUpperCase();
-  };
-
-  const saveToSessionStorage = (data: ClientData) => {
-    const existingClients = JSON.parse(sessionStorage.getItem('ahumai_clients') || '[]');
-    existingClients.push(data);
-    sessionStorage.setItem('ahumai_clients', JSON.stringify(existingClients));
   };
 
   const generatePDF = async (clientData: ClientData) => {
@@ -163,7 +211,7 @@ const ClientOnboarding: React.FC = () => {
       }
 
       // Save PDF locally for demonstration
-      pdf.save(`client-confirmation-${clientData.clientId}.pdf`);
+      pdf.save(`client-confirmation-${clientData.client_id}.pdf`);
       
       return pdf;
     } catch (error) {
@@ -179,9 +227,9 @@ const ClientOnboarding: React.FC = () => {
         // Here you would integrate with your email service (SendGrid, AWS SES, etc.)
         alert(`Confirmation email sent to ${email}!`);
         
-        // Redirect to main website after email is sent
+        // Redirect to client dashboard after email is sent
         setTimeout(() => {
-          window.location.href = 'https://ahumai.co.in';
+          window.location.href = '/client-dashboard';
         }, 1000);
         
         resolve(true);
@@ -190,25 +238,49 @@ const ClientOnboarding: React.FC = () => {
   };
 
   const onSubmit = async (data: ClientFormData) => {
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      const clientData: ClientData = {
-        ...data,
-        signatureUrl: signaturePreview,
-        submissionDate: new Date().toISOString(),
-        clientId: generateClientId()
+      const clientDataToSave: Omit<ClientData, 'id' | 'client_id' | 'submission_date' | 'updated_at'> = {
+        user_id: user.id,
+        first_name: data.firstName,
+        last_name: data.lastName,
+        mobile_number: data.mobileNumber,
+        business_email: data.businessEmail,
+        business_name: data.businessName,
+        signature_url: signaturePreview,
+        privacy_policy: data.privacyPolicy,
+        terms_conditions: data.termsConditions,
+        support_addendum: data.supportAddendum,
+        is_onboarding_complete: true,
+        status: 'pending'
       };
 
-      // Save to session storage
-      saveToSessionStorage(clientData);
-      
+      let savedClientData: ClientData;
+
+      if (existingClientData) {
+        // Update existing record
+        const { data: updatedData, error } = await updateClientData(existingClientData.id!, clientDataToSave);
+        if (error) throw error;
+        savedClientData = updatedData;
+      } else {
+        // Insert new record
+        const { data: newData, error } = await insertClientData(clientDataToSave as ClientData);
+        if (error) throw error;
+        savedClientData = newData;
+      }
+
       // Set submitted data for PDF preview
-      setSubmittedData(clientData);
+      setSubmittedData(savedClientData);
 
       // Generate PDF after a short delay to allow DOM to update
       setTimeout(async () => {
-        await generatePDF(clientData);
+        await generatePDF(savedClientData);
         setIsSubmitting(false);
         
         // Show success modal instead of alert
@@ -229,7 +301,28 @@ const ClientOnboarding: React.FC = () => {
 
   const handleModalClose = () => {
     setShowSuccessModal(false);
-    setSubmittedData(null);
+    // Redirect to client dashboard
+    window.location.href = '/client-dashboard';
+  };
+
+  const handleAuthLogin = async (provider: 'google' | 'github') => {
+    try {
+      let result;
+      if (provider === 'google') {
+        result = await signInWithGoogle();
+      } else {
+        result = await signInWithGitHub();
+      }
+      
+      if (result.error) {
+        console.error('Auth error:', result.error);
+        alert('Login failed. Please try again.');
+      }
+      // The redirect will be handled by Supabase
+    } catch (error) {
+      console.error('Auth error:', error);
+      alert('Login failed. Please try again.');
+    }
   };
 
   // Step navigation for better UX (Chunking principle)
@@ -244,14 +337,72 @@ const ClientOnboarding: React.FC = () => {
   // Progress indicator (Goal-Gradient Effect)
   const progressPercentage = (currentStep / 3) * 100;
 
+  if (isLoading) {
+    return (
+      <div className="client-onboarding">
+        <div className="tech-background"></div>
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Authentication Modal
+  if (showAuthModal) {
+    return (
+      <div className="client-onboarding">
+        <div className="tech-background"></div>
+        <div className="auth-container">
+          <div className="auth-modal">
+            <div className="logo-section">
+              <img src="/ahumai_logo.svg" alt="AhumAI Logo" className="header-logo" />
+              <h1>Welcome to AhumAI</h1>
+              <p>Please sign in to access the client onboarding form</p>
+            </div>
+            
+            <div className="auth-buttons">
+              <button 
+                onClick={() => handleAuthLogin('google')} 
+                className="auth-btn google-btn"
+              >
+                <span className="auth-icon">🔍</span>
+                Continue with Google
+              </button>
+              
+              <button 
+                onClick={() => handleAuthLogin('github')} 
+                className="auth-btn github-btn"
+              >
+                <span className="auth-icon">🐱</span>
+                Continue with GitHub
+              </button>
+            </div>
+            
+            <p className="auth-note">
+              Secure authentication powered by Supabase
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="client-onboarding">
       <div className="tech-background"></div>
       <div className="onboarding-container">
         <div className="onboarding-header">
-          <div className="logo-section">
-            <img src="/ahumai_logo.svg" alt="AhumAI Logo" className="header-logo" />
-            <h1>Client Onboarding</h1>
+          <div className="header-top">
+            <div className="logo-section">
+              <img src="/ahumai_logo.svg" alt="AhumAI Logo" className="header-logo" />
+              <h1>Client Onboarding</h1>
+            </div>
+            <div className="user-info">
+              <span>Welcome, {user?.email}</span>
+              <button onClick={() => signOut()} className="sign-out-btn">Sign Out</button>
+            </div>
           </div>
           <p>Join the AhumAI family in just 3 simple steps</p>
           
@@ -372,7 +523,7 @@ const ClientOnboarding: React.FC = () => {
                       }
                     })}
                     className={errors.businessEmail ? 'error' : ''}
-                    placeholder="your.email@company.com"
+                    placeholder="business@company.com"
                   />
                   {errors.businessEmail && <span className="error-message">{errors.businessEmail.message}</span>}
                 </div>
@@ -408,121 +559,88 @@ const ClientOnboarding: React.FC = () => {
             </div>
           )}
 
-          {/* Step 3: Legal Agreements and Signature */}
+          {/* Step 3: Legal & Signature */}
           {currentStep === 3 && (
             <div className="form-step active">
               <h2 className="step-title">
                 <span className="step-number">03</span>
                 Legal Agreements & Signature
               </h2>
-              <p className="step-description">Please review and agree to our terms, then provide your signature</p>
+              <p className="step-description">Review agreements and provide your digital signature</p>
               
-              {/* Legal Documents Section - Chunking and Clear Hierarchy */}
-              <div className="legal-section">
-                <h3 className="section-title">Legal Documents</h3>
-                <p className="section-description">
-                  Please review the following documents and check the boxes to indicate your agreement:
-                </p>
-                
-                <div className="legal-agreements">
-                  <div className="legal-item">
-                    <div className="checkbox-group">
-                      <input
-                        type="checkbox"
-                        id="privacyPolicy"
-                        {...register('privacyPolicy', { required: 'You must agree to the Privacy Policy' })}
-                        className={errors.privacyPolicy ? 'error' : ''}
-                      />
-                      <label htmlFor="privacyPolicy" className="checkbox-label">
-                        <span className="checkmark"></span>
-                        I have read and agree to the 
-                        <a href="/Privacy Policy.pdf" target="_blank" rel="noopener noreferrer" className="doc-link">
-                          Privacy Policy
-                        </a>
-                        <span className="required">*</span>
-                      </label>
-                    </div>
-                    {errors.privacyPolicy && <span className="error-message">{errors.privacyPolicy.message}</span>}
-                  </div>
-
-                  <div className="legal-item">
-                    <div className="checkbox-group">
-                      <input
-                        type="checkbox"
-                        id="termsConditions"
-                        {...register('termsConditions', { required: 'You must agree to the Terms & Conditions' })}
-                        className={errors.termsConditions ? 'error' : ''}
-                      />
-                      <label htmlFor="termsConditions" className="checkbox-label">
-                        <span className="checkmark"></span>
-                        I have read and agree to the 
-                        <a href="/AhumAI- T & C..pdf" target="_blank" rel="noopener noreferrer" className="doc-link">
-                          Terms & Conditions
-                        </a>
-                        <span className="required">*</span>
-                      </label>
-                    </div>
-                    {errors.termsConditions && <span className="error-message">{errors.termsConditions.message}</span>}
-                  </div>
-
-                  <div className="legal-item">
-                    <div className="checkbox-group">
-                      <input
-                        type="checkbox"
-                        id="supportAddendum"
-                        {...register('supportAddendum', { required: 'You must agree to the Support Addendum' })}
-                        className={errors.supportAddendum ? 'error' : ''}
-                      />
-                      <label htmlFor="supportAddendum" className="checkbox-label">
-                        <span className="checkmark"></span>
-                        I have read and agree to the 
-                        <a href="/Support Addendum- AhumAI.pdf" target="_blank" rel="noopener noreferrer" className="doc-link">
-                          Support Addendum
-                        </a>
-                        <span className="required">*</span>
-                      </label>
-                    </div>
-                    {errors.supportAddendum && <span className="error-message">{errors.supportAddendum.message}</span>}
-                  </div>
-                </div>
-              </div>
-
-              {/* Signature Section */}
               <div className="signature-section">
-                <h3 className="section-title">Digital Signature</h3>
-                <p className="section-description">
-                  Upload your signature to complete the onboarding process
-                </p>
-                
-                <div className="form-group full-width">
-                  <label htmlFor="signature" className="file-label">
-                    Upload Signature <span className="required">*</span>
+                <div className="form-group">
+                  <label htmlFor="signature" className="signature-label">
+                    Digital Signature <span className="required">*</span>
                   </label>
-                  <div className="file-upload-container">
+                  <div className="signature-upload">
                     <input
                       type="file"
                       id="signature"
                       accept="image/*"
-                      {...register('signature', { required: 'Signature is required' })}
                       onChange={handleSignatureUpload}
-                      className={`file-input ${errors.signature ? 'error' : ''}`}
+                      className="signature-input"
                     />
-                    <div className="file-upload-display">
-                      {signaturePreview ? (
-                        <div className="signature-preview">
-                          <img src={signaturePreview} alt="Signature Preview" />
-                          <span className="signature-status">✓ Signature uploaded</span>
-                        </div>
-                      ) : (
-                        <div className="file-placeholder">
-                          <span className="upload-icon">📝</span>
-                          <span>Click to upload your signature</span>
-                          <span className="file-hint">Supported formats: JPG, PNG, GIF</span>
-                        </div>
-                      )}
-                    </div>
+                    <label htmlFor="signature" className="signature-upload-btn">
+                      {signaturePreview ? 'Change Signature' : 'Upload Signature'}
+                    </label>
                   </div>
-                  {errors.signature && <span className="error-message">{errors.signature.message}</span>}
+                  
+                  {signaturePreview && (
+                    <div className="signature-preview">
+                      <img src={signaturePreview} alt="Signature Preview" />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="legal-agreements">
+                <h3>Legal Agreements</h3>
+                <p className="legal-intro">Please review and agree to the following documents:</p>
+                
+                <div className="agreement-item">
+                  <label className="checkbox-container">
+                    <input
+                      type="checkbox"
+                      {...register('privacyPolicy', { required: 'You must agree to the Privacy Policy' })}
+                    />
+                    <span className="checkmark"></span>
+                    I have read and agree to the{' '}
+                    <a href="/Privacy Policy.pdf" target="_blank" rel="noopener noreferrer" className="legal-link">
+                      Privacy Policy
+                    </a>
+                  </label>
+                  {errors.privacyPolicy && <span className="error-message">{errors.privacyPolicy.message}</span>}
+                </div>
+
+                <div className="agreement-item">
+                  <label className="checkbox-container">
+                    <input
+                      type="checkbox"
+                      {...register('termsConditions', { required: 'You must agree to the Terms & Conditions' })}
+                    />
+                    <span className="checkmark"></span>
+                    I have read and agree to the{' '}
+                    <a href="/AhumAI- T & C..pdf" target="_blank" rel="noopener noreferrer" className="legal-link">
+                      Terms & Conditions
+                    </a>
+                  </label>
+                  {errors.termsConditions && <span className="error-message">{errors.termsConditions.message}</span>}
+                </div>
+
+                <div className="agreement-item">
+                  <label className="checkbox-container">
+                    <input
+                      type="checkbox"
+                      {...register('supportAddendum', { required: 'You must agree to the Support Addendum' })}
+                    />
+                    <span className="checkmark"></span>
+                    I have read and agree to the{' '}
+                    <a href="/Support Addendum- AhumAI.pdf" target="_blank" rel="noopener noreferrer" className="legal-link">
+                      Support Addendum
+                    </a>
+                  </label>
+                  {errors.supportAddendum && <span className="error-message">{errors.supportAddendum.message}</span>}
                 </div>
               </div>
 
@@ -532,118 +650,112 @@ const ClientOnboarding: React.FC = () => {
                 </button>
                 <button 
                   type="submit" 
-                  className="btn-submit"
+                  className="btn-primary submit-btn"
                   disabled={isSubmitting || !allFieldsFilled || !watchedValues.privacyPolicy || !watchedValues.termsConditions || !watchedValues.supportAddendum}
                 >
-                  {isSubmitting ? (
-                    <>
-                      <span className="loading-spinner"></span>
-                      Processing...
-                    </>
-                  ) : (
-                    <>
-                      <span className="submit-icon">🚀</span>
-                      Complete Onboarding
-                    </>
-                  )}
+                  {isSubmitting ? 'Submitting...' : 'Complete Onboarding'}
                 </button>
               </div>
             </div>
           )}
         </form>
-      </div>
 
-      {/* Success Modal */}
-      <SuccessModal
-        isOpen={showSuccessModal}
-        clientData={submittedData}
-        onClose={handleModalClose}
-        onEmailSend={sendEmailConfirmation}
-      />
-
-      {/* PDF Preview Template - Hidden from view but used for PDF generation */}
-      {submittedData && (
-        <div ref={pdfRef} className="pdf-template">
-          <div className="pdf-header">
-            <div className="logo-container">
-              <img src="/ahumai_logo.svg" alt="AhumAI Logo" className="pdf-logo" />
-              <div className="logo-text">
-                <h1>AhumAI</h1>
-                <p className="tagline">Create for More</p>
-              </div>
-            </div>
-            <div className="pdf-meta">
-              <p><strong>Client ID:</strong> {submittedData.clientId}</p>
-              <p><strong>Date:</strong> {new Date(submittedData.submissionDate).toLocaleDateString('en-US', { 
-                month: '2-digit', 
-                day: '2-digit', 
-                year: '2-digit' 
-              })}</p>
-            </div>
-          </div>
-
-          <div className="pdf-content">
-            <div className="client-details">
-              <h2>Client Information</h2>
-              <div className="detail-row">
-                <span className="label">Full Name:</span>
-                <span className="value">{submittedData.firstName} {submittedData.lastName}</span>
-              </div>
-              <div className="detail-row">
-                <span className="label">Mobile Number:</span>
-                <span className="value">{submittedData.mobileNumber}</span>
-              </div>
-              <div className="detail-row">
-                <span className="label">Business Email:</span>
-                <span className="value">{submittedData.businessEmail}</span>
-              </div>
-              <div className="detail-row">
-                <span className="label">Business Name:</span>
-                <span className="value">{submittedData.businessName}</span>
-              </div>
-            </div>
-
-            <div className="legal-confirmations">
-              <h2>Legal Agreements Confirmed</h2>
-              <div className="agreement-item">✓ Privacy Policy - Agreed</div>
-              <div className="agreement-item">✓ Terms & Conditions - Agreed</div>
-              <div className="agreement-item">✓ Support Addendum - Agreed</div>
-            </div>
-
-            {submittedData.signatureUrl && (
-              <div className="signature-section">
-                <h2>Digital Signature</h2>
-                <div className="signature-container">
-                  <img src={submittedData.signatureUrl} alt="Client Signature" />
-                  <p>Signature Date: {new Date(submittedData.submissionDate).toLocaleDateString('en-US', { 
-                    month: '2-digit', 
-                    day: '2-digit', 
-                    year: '2-digit' 
-                  })}</p>
+        {/* PDF Preview Section (Hidden) */}
+        {submittedData && (
+          <div ref={pdfRef} className="pdf-preview" style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
+            <div className="pdf-content">
+              <div className="pdf-header">
+                <img src="/ahumai_logo.svg" alt="AhumAI Logo" className="pdf-logo" />
+                <div className="company-info">
+                  <h1>AhumAI</h1>
+                  <div className="tagline">Create for More</div>
                 </div>
               </div>
-            )}
-
-            <div className="pdf-footer">
-              <p>This document confirms the successful onboarding of the above client to AhumAI services.</p>
-              <p>All legal agreements have been reviewed and accepted by the client.</p>
-              <p>Generated on: {new Date().toLocaleString('en-US', { 
-                month: '2-digit', 
-                day: '2-digit', 
-                year: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit'
-              })}</p>
-              <hr />
-              <div className="company-info">
-                <strong>AhumAI</strong><br />
-                Advanced AI Solutions<br />
-                www.ahumai.co.in
+              
+              <div className="pdf-title">
+                <h2>Client Onboarding Confirmation</h2>
+              </div>
+              
+              <div className="client-details">
+                <h3>Client Information</h3>
+                <div className="detail-row">
+                  <span className="label">Client ID:</span>
+                  <span className="value">{submittedData.client_id}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="label">Name:</span>
+                  <span className="value">{submittedData.first_name} {submittedData.last_name}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="label">Mobile:</span>
+                  <span className="value">{submittedData.mobile_number}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="label">Business Email:</span>
+                  <span className="value">{submittedData.business_email}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="label">Business Name:</span>
+                  <span className="value">{submittedData.business_name}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="label">Date:</span>
+                  <span className="value">{new Date(submittedData.submission_date!).toLocaleDateString('en-GB', { 
+                    day: '2-digit',
+                    month: '2-digit', 
+                    year: '2-digit' 
+                  })}</span>
+                </div>
+              </div>
+              
+              <div className="agreements-section">
+                <h3>Legal Agreements</h3>
+                <div className="agreement-confirmation">
+                  <p>✓ Privacy Policy - Agreed</p>
+                  <p>✓ Terms & Conditions - Agreed</p>
+                  <p>✓ Support Addendum - Agreed</p>
+                </div>
+              </div>
+              
+              {signaturePreview && (
+                <div className="signature-section-pdf">
+                  <h3>Digital Signature</h3>
+                  <div className="signature-container">
+                    <img src={signaturePreview} alt="Client Signature" className="signature-image" />
+                    <div className="signature-details">
+                      <p>Signature Date: {new Date(submittedData.submission_date!).toLocaleDateString('en-GB', { 
+                        day: '2-digit',
+                        month: '2-digit', 
+                        year: '2-digit' 
+                      })}</p>
+                      <p>Client: {submittedData.first_name} {submittedData.last_name}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              <div className="pdf-footer">
+                <p>Generated on: {new Date().toLocaleDateString('en-GB', { 
+                  day: '2-digit',
+                  month: '2-digit', 
+                  year: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}</p>
+                <p>This document confirms the successful completion of client onboarding with AhumAI.</p>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+
+        {/* Success Modal */}
+        <SuccessModal
+          isOpen={showSuccessModal}
+          clientData={submittedData}
+          onClose={handleModalClose}
+          onEmailSend={sendEmailConfirmation}
+        />
+      </div>
     </div>
   );
 };

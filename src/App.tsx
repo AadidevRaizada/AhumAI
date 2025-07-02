@@ -6,6 +6,7 @@ import ProjectsPage from './components/Projects/ProjectsPage';
 import AboutPage from './components/About/AboutPage';
 import ContactPage from './components/Contact/ContactPage';
 import ClientOnboarding from './components/ClientOnboarding';
+import ClientDashboard from './components/ClientDashboard';
 import AdminDashboard from './components/AdminDashboard';
 import AnimatedBackground from './components/AnimatedBackground/AnimatedBackground';
 import CursorEffect from './components/CursorEffect/CursorEffect';
@@ -43,6 +44,9 @@ function App() {
       <Routes>
         {/* Client Onboarding Route - Standalone page */}
         <Route path="/client-onboarding" element={<ClientOnboarding />} />
+        
+        {/* Client Dashboard Route - Standalone page */}
+        <Route path="/client-dashboard" element={<ClientDashboard />} />
         
         {/* Admin Dashboard Route - Standalone page */}
         <Route path="/admin" element={<AdminDashboard />} />

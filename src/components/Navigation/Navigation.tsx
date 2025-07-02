@@ -87,6 +87,7 @@ const Navigation: React.FC = () => {
         <div className={`indicator-line ${activeSection === 'projects' ? 'active' : ''}`} />
         <div className={`indicator-line ${activeSection === 'about' ? 'active' : ''}`} />
         <div className={`indicator-line ${activeSection === 'contact' ? 'active' : ''}`} />
+        <div className={`indicator-line ${activeSection === 'client' ? 'active' : ''}`} />
       </div>
       
       <div className={`vertical-nav ${menuOpen ? 'open' : ''}`}>
@@ -133,6 +134,14 @@ const Navigation: React.FC = () => {
             onClick={() => handleNavigation('contact')}
           >
             <span className="nav-text">CONTACT</span>
+            <span className="nav-dot"></span>
+          </button>
+          
+          <button 
+            className={`nav-button ${activeSection === 'client' ? 'active' : ''}`}
+            onClick={() => window.location.href = '/client-onboarding'}
+          >
+            <span className="nav-text">CLIENT</span>
             <span className="nav-dot"></span>
           </button>
         </div>
