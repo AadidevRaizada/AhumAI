@@ -1,7 +1,10 @@
-import React, { useEffect, useState, lazy, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Route, Routes } from 'react-router-dom';
 import Navigation from './components/Navigation/Navigation';
 import HomePage from './components/Home/HomePage';
+import ProjectsPage from './components/Projects/ProjectsPage';
+import AboutPage from './components/About/AboutPage';
+import ContactPage from './components/Contact/ContactPage';
 import ClientOnboarding from './components/ClientOnboarding';
 import ClientDashboard from './components/ClientDashboard';
 import AdminDashboard from './components/AdminDashboard';
@@ -26,13 +29,8 @@ function App() {
     return (
       <div className="loading-screen">
         <div className="loader">
-          <div className="loader-circle">
-            <div className="triangle"></div>
-            <div className="triangle"></div>
-            <div className="triangle"></div>
-            <div className="triangle"></div>
-          </div>
-          <div className="loader-text">AHUMAI</div>
+          <div className="loader-circle"></div>
+          <div className="loader-text">LOADING</div>
         </div>
       </div>
     );
@@ -61,10 +59,9 @@ function App() {
               <Route path="/" element={
                 <main className="main-content">
                   <HomePage />
-                  {/* The routes below are no longer needed */}
-                  {/* <Route path="/about" element={<AboutPage />} /> */}
-                  {/* <Route path="/projects" element={<ProjectsPage />} /> */}
-                  {/* <Route path="/contact" element={<ContactPage />} /> */}
+                  <ProjectsPage />
+                  <AboutPage />
+                  <ContactPage />
                 </main>
               } />
             </Routes>
