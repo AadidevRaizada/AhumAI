@@ -9,8 +9,8 @@
 ---
 
 ## Supabase Configuration
-- **URL:** https://lozvgagfinnzuwvxdlxo.supabase.co
-- **Anon Key:** `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` (stored in src/lib/supabase.ts)
+- **URL:** Configured via `VITE_SUPABASE_URL` environment variable
+- **Anon Key:** Configured via `VITE_SUPABASE_ANON_KEY` environment variable (stored securely in .env.local)
 - **Authentication:** OAuth (Google, GitHub) + Email/Password
 - **Storage:** Signature uploads in 'client-signatures' bucket
 
@@ -344,9 +344,12 @@ COPY (SELECT * FROM public.clients) TO '/path/clients_backup.csv' WITH CSV HEADE
 # Install dependencies
 npm install @supabase/supabase-js
 
-# Environment variables (.env.local)
-VITE_SUPABASE_URL=https://lozvgagfinnzuwvxdlxo.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIs...
+# Copy environment template and add your credentials
+cp .env.example .env.local
+
+# Edit .env.local with your actual Supabase credentials:
+# VITE_SUPABASE_URL=https://your-project-ref.supabase.co
+# VITE_SUPABASE_ANON_KEY=your_actual_anon_key_here
 
 # Run development server
 npm run dev
