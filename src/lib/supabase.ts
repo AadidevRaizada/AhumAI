@@ -1,36 +1,44 @@
-import { createClient } from '@supabase/supabase-js'
+// Supabase functionality temporarily disabled
+// import { createClient } from '@supabase/supabase-js'
 
-// Supabase configuration
-const supabaseUrl = 'https://lozvgagfinnzuwvxdlxo.supabase.co'
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvenZnYWdmaW5uenV3dnhkbHhvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEzNjk4NDMsImV4cCI6MjA2Njk0NTg0M30._wjeHhPl3kjcFlhjScXhqR30mn69B1Yoh9JDRUXjuzI'
+// Dummy Supabase configuration to prevent errors
+// const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+// const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-// Create Supabase client
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true
-  }
-})
+// Supabase client creation disabled
+// if (!supabaseUrl || !supabaseAnonKey) {
+//   throw new Error('Missing Supabase environment variables. Please check your .env.local file.')
+// }
 
-// Database types for TypeScript
+// export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+//   auth: {
+//     autoRefreshToken: true,
+//     persistSession: true,
+//     detectSessionInUrl: true
+//   }
+// })
+
+// Dummy export to prevent import errors
+export const supabase = null;
+
+// Client data interface
 export interface ClientData {
-  id?: string
-  user_id?: string
-  client_id: string
-  first_name: string
-  last_name: string
-  mobile_number: string
-  business_email: string
-  business_name: string
-  signature_url?: string
-  privacy_policy: boolean
-  terms_conditions: boolean
-  support_addendum: boolean
-  submission_date?: string
-  updated_at?: string
-  is_onboarding_complete?: boolean
-  status?: 'pending' | 'approved' | 'rejected' | 'inactive'
+  id?: string;
+  user_id: string;
+  client_id: string;
+  first_name: string;
+  last_name: string;
+  mobile_number: string;
+  business_email: string;
+  business_name: string;
+  signature_url?: string;
+  privacy_policy: boolean;
+  terms_conditions: boolean;
+  support_addendum: boolean;
+  is_onboarding_complete: boolean;
+  status: string;
+  submission_date: string;
+  updated_at: string;
 }
 
 export interface ClientProject {
@@ -61,125 +69,69 @@ export interface SupportTicket {
 
 // Helper functions for authentication
 export const signInWithGoogle = async () => {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: `${window.location.origin}/client-onboarding`
-    }
-  })
-  return { data, error }
+  console.log('Supabase functionality disabled');
+  return { data: null, error: new Error('Supabase disabled') };
 }
 
 export const signInWithGitHub = async () => {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'github',
-    options: {
-      redirectTo: `${window.location.origin}/client-onboarding`
-    }
-  })
-  return { data, error }
+  console.log('Supabase functionality disabled');
+  return { data: null, error: new Error('Supabase disabled') };
 }
 
 export const signInWithEmail = async (email: string, password: string) => {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password
-  })
-  return { data, error }
+  console.log('Supabase functionality disabled');
+  return { data: null, error: new Error('Supabase disabled') };
 }
 
 export const signUpWithEmail = async (email: string, password: string, userData?: any) => {
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: userData,
-      emailRedirectTo: `${window.location.origin}/client-onboarding`
-    }
-  })
-  return { data, error }
+  console.log('Supabase functionality disabled');
+  return { data: null, error: new Error('Supabase disabled') };
 }
 
 export const signOut = async () => {
-  const { error } = await supabase.auth.signOut()
-  return { error }
+  console.log('Supabase functionality disabled');
+  return { error: null };
 }
 
 export const getCurrentUser = async () => {
-  const { data: { user }, error } = await supabase.auth.getUser()
-  return { user, error }
+  console.log('Supabase functionality disabled');
+  return { user: null, error: new Error('Supabase disabled') };
 }
 
 export const getCurrentSession = async () => {
-  const { data: { session }, error } = await supabase.auth.getSession()
-  return { session, error }
+  console.log('Supabase functionality disabled');
+  return { session: null, error: new Error('Supabase disabled') };
 }
 
 // Helper functions for client data
-export const insertClientData = async (clientData: ClientData) => {
-  const { data, error } = await supabase
-    .from('clients')
-    .insert(clientData)
-    .select()
-    .single()
-  
-  return { data, error }
+export const insertClientData = async (clientData: Omit<ClientData, 'id' | 'client_id' | 'submission_date' | 'updated_at' | 'is_onboarding_complete'>) => {
+  console.log('Supabase functionality disabled');
+  return { data: null, error: new Error('Supabase disabled') };
 }
 
 export const updateClientData = async (id: string, updates: Partial<ClientData>) => {
-  const { data, error } = await supabase
-    .from('clients')
-    .update(updates)
-    .eq('id', id)
-    .select()
-    .single()
-  
-  return { data, error }
+  console.log('Supabase functionality disabled');
+  return { data: null, error: new Error('Supabase disabled') };
 }
 
 export const getClientData = async (userId: string) => {
-  const { data, error } = await supabase
-    .from('clients')
-    .select('*')
-    .eq('user_id', userId)
-    .single()
-  
-  return { data, error }
+  console.log('Supabase functionality disabled');
+  return { data: null, error: new Error('Supabase disabled') };
 }
 
 export const getAllClients = async () => {
-  const { data, error } = await supabase
-    .from('clients')
-    .select('*')
-    .order('submission_date', { ascending: false })
-  
-  return { data, error }
+  console.log('Supabase functionality disabled');
+  return { data: null, error: new Error('Supabase disabled') };
 }
 
 // Helper function to check if user is admin
 export const isUserAdmin = async () => {
-  const { user } = await getCurrentUser()
-  if (!user) return false
-  
-  return user.user_metadata?.role === 'admin' || 
-         (user as any).raw_user_meta_data?.role === 'admin'
+  console.log('Supabase functionality disabled');
+  return false;
 }
 
 // Storage helper for signature uploads
 export const uploadSignature = async (file: File, userId: string) => {
-  const fileExt = file.name.split('.').pop()
-  const fileName = `${userId}-${Date.now()}.${fileExt}`
-  const filePath = `signatures/${fileName}`
-
-  const { data, error } = await supabase.storage
-    .from('client-signatures')
-    .upload(filePath, file)
-
-  if (error) return { data: null, error }
-
-  const { data: { publicUrl } } = supabase.storage
-    .from('client-signatures')
-    .getPublicUrl(filePath)
-
-  return { data: { path: filePath, url: publicUrl }, error: null }
+  console.log('Supabase functionality disabled');
+  return { data: null, error: new Error('Supabase disabled') };
 } 
