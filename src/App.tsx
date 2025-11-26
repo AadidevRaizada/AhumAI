@@ -5,9 +5,6 @@ import HomePage from './components/Home/HomePage';
 import ProjectsPage from './components/Projects/ProjectsPage';
 import AboutPage from './components/About/AboutPage';
 import ContactPage from './components/Contact/ContactPage';
-// import ClientOnboarding from './components/ClientOnboarding';
-// import ClientDashboard from './components/ClientDashboard';
-// import AdminDashboard from './components/AdminDashboard';
 import AnimatedBackground from './components/AnimatedBackground/AnimatedBackground';
 import CursorEffect from './components/CursorEffect/CursorEffect';
 import Footer from './components/Footer/Footer';
@@ -15,16 +12,16 @@ import './App.css';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
-  
+
   useEffect(() => {
     // Simulate loading time
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
-    
+
     return () => clearTimeout(timer);
   }, []);
-  
+
   if (isLoading) {
     return (
       <div className="loading-screen">
@@ -35,18 +32,15 @@ function App() {
       </div>
     );
   }
-  
+
   return (
     <div className="app">
       <AnimatedBackground />
       <CursorEffect />
-      
+
       <Routes>
-        {/* Client-related routes temporarily disabled */}
-        {/* <Route path="/client-onboarding" element={<ClientOnboarding />} /> */}
-        {/* <Route path="/client-dashboard" element={<ClientDashboard />} /> */}
-        {/* <Route path="/admin" element={<AdminDashboard />} /> */}
-        
+        {/* Client-related routes removed */}
+
         {/* Main Website Routes */}
         <Route path="/*" element={
           <>

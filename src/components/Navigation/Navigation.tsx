@@ -15,7 +15,7 @@ const Navigation: React.FC = () => {
   const [selectedQuestion, setSelectedQuestion] = useState<number | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [logoError, setLogoError] = useState(false);
-  
+
   const faqs: FAQ[] = [
     {
       id: 1,
@@ -43,15 +43,15 @@ const Navigation: React.FC = () => {
       answer: "Yes, we offer ongoing maintenance and support packages to ensure your digital products remain secure, up-to-date, and performing optimally after launch."
     }
   ];
-  
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(true);
     }, 1000);
-    
+
     return () => clearTimeout(timer);
   }, []);
-  
+
   const handleNavigation = (section: string) => {
     setActiveSection(section);
     setMenuOpen(false);
@@ -60,7 +60,7 @@ const Navigation: React.FC = () => {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
-  
+
   const toggleTerminal = () => {
     setTerminalActive(!terminalActive);
     setSelectedQuestion(null);
@@ -73,7 +73,7 @@ const Navigation: React.FC = () => {
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
-  
+
   return (
     <div className={`navigation-container ${isVisible ? 'visible' : ''}`}>
       <div className={`hamburger-menu ${menuOpen ? 'open' : ''}`} onClick={toggleMenu}>
@@ -81,80 +81,71 @@ const Navigation: React.FC = () => {
         <span></span>
         <span></span>
       </div>
-      
+
       <div className="nav-indicator">
         <div className={`indicator-line ${activeSection === 'home' ? 'active' : ''}`} />
         <div className={`indicator-line ${activeSection === 'projects' ? 'active' : ''}`} />
         <div className={`indicator-line ${activeSection === 'about' ? 'active' : ''}`} />
         <div className={`indicator-line ${activeSection === 'contact' ? 'active' : ''}`} />
-        <div className={`indicator-line ${activeSection === 'client' ? 'active' : ''}`} />
       </div>
-      
+
       <div className={`vertical-nav ${menuOpen ? 'open' : ''}`}>
         <div className="nav-logo">
           {logoError ? (
             <div className="logo-text">AhumAI</div>
           ) : (
-            <img 
-              src="/AhumAI_logo_resized.png" 
-              alt="AhumAI Logo" 
-              className="nav-logo-image" 
+            <img
+              src="/AhumAI_logo_resized.png"
+              alt="AhumAI Logo"
+              className="nav-logo-image"
               onError={() => setLogoError(true)}
             />
           )}
         </div>
-        
+
         <div className="nav-button-container">
-          <button 
+          <button
             className={`nav-button ${activeSection === 'home' ? 'active' : ''}`}
             onClick={() => handleNavigation('home')}
           >
             <span className="nav-text">HOME</span>
             <span className="nav-dot"></span>
           </button>
-          
-          <button 
+
+          <button
             className={`nav-button ${activeSection === 'projects' ? 'active' : ''}`}
             onClick={() => handleNavigation('projects')}
           >
             <span className="nav-text">PROJECTS</span>
             <span className="nav-dot"></span>
           </button>
-          
-          <button 
+
+          <button
             className={`nav-button ${activeSection === 'about' ? 'active' : ''}`}
             onClick={() => handleNavigation('about')}
           >
             <span className="nav-text">ABOUT</span>
             <span className="nav-dot"></span>
           </button>
-          
-          <button 
+
+          <button
             className={`nav-button ${activeSection === 'contact' ? 'active' : ''}`}
             onClick={() => handleNavigation('contact')}
           >
             <span className="nav-text">CONTACT</span>
             <span className="nav-dot"></span>
           </button>
-          
-          <button 
-            className={`nav-button ${activeSection === 'client' ? 'active' : ''}`}
-            onClick={() => window.location.href = '/client-onboarding'}
-          >
-            <span className="nav-text">CLIENT</span>
-            <span className="nav-dot"></span>
-          </button>
         </div>
       </div>
-      
-      <button 
+
+      <button
         className={`terminal-button ${terminalActive ? 'active' : ''}`}
         onClick={toggleTerminal}
       >
         <Terminal className="terminal-icon" />
         <span className="terminal-text">ACCESS TERMINAL</span>
       </button>
-      
+
       {terminalActive && (
         <div className="terminal-container">
           <div className="terminal-header">
@@ -166,7 +157,7 @@ const Navigation: React.FC = () => {
               <span className="prompt">AhumAI:~$</span>
               <span className="typing-text">accessing system...</span>
             </div>
-            
+
             {!selectedQuestion ? (
               <div className="faq-container">
                 <div className="command-response">
@@ -174,7 +165,7 @@ const Navigation: React.FC = () => {
                 </div>
                 <div className="faq-questions">
                   {faqs.map((faq) => (
-                    <button 
+                    <button
                       key={faq.id}
                       className="faq-question-btn"
                       onClick={() => handleQuestionSelect(faq.id)}
@@ -193,7 +184,7 @@ const Navigation: React.FC = () => {
                 <div className="command-response answer">
                   {faqs.find(faq => faq.id === selectedQuestion)?.answer}
                 </div>
-                <button 
+                <button
                   className="back-button"
                   onClick={() => setSelectedQuestion(null)}
                 >
