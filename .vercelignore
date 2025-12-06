@@ -1,0 +1,29 @@
+# Dependencies
+node_modules
+
+# Build output (will be rebuilt)
+dist
+
+# Large video files
+*.mkv
+*.mp4
+*.avi
+*.mov
+*.wmv
+
+# Specific large files
+src/assets/2025-07-01 12-58-48.mkv
+src/assets/Siu.mkv
+
+# Logs
+*.log
+
+# Editor
+.vscode
+.idea
+
+# Git
+.git
+
+# Build log
+build_log.txt
