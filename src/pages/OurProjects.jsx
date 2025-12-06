@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { FeatureShowcase } from '../components/FeatureShowcase';
-import DarkVeil from '../components/DarkVeil';
+import MobileGradient from '../components/MobileGradient';
+import { useOptimizedSettings } from '../hooks/useDeviceDetection';
 import fullAhead1 from '../assets/images/Fullahead/FullAhead1.png';
 import fullAhead2 from '../assets/images/Fullahead/FullAhead2.png';
 import fullAhead3 from '../assets/images/Fullahead/FullAhead3.png';
@@ -8,7 +9,12 @@ import insights1 from '../assets/images/Scm-insights/insights1.png';
 import insights2 from '../assets/images/Scm-insights/insights2.png';
 import insights3 from '../assets/images/Scm-insights/insights3.png';
 
+// Lazy load heavy WebGL component
+const DarkVeil = lazy(() => import('../components/DarkVeil'));
+
 const OurProjects = () => {
+    const { showWebGLEffects, darkVeilSettings, isMobile } = useOptimizedSettings();
+
     const fullAheadTabs = [
         {
             value: "home",
@@ -54,9 +60,18 @@ const OurProjects = () => {
 
     return (
         <div className="pt-20 relative min-h-screen bg-black">
-            {/* Shared DarkVeil Background */}
+            {/* Background - Conditional rendering */}
             <div className="absolute inset-0 z-0">
-                <DarkVeil />
+                {showWebGLEffects ? (
+                    <Suspense fallback={<MobileGradient variant="cosmic" />}>
+                        <DarkVeil
+                            speed={darkVeilSettings.speed}
+                            resolutionScale={darkVeilSettings.resolutionScale}
+                        />
+                    </Suspense>
+                ) : (
+                    <MobileGradient variant="cosmic" animate={true} />
+                )}
             </div>
 
             {/* Content */}
@@ -89,10 +104,10 @@ const OurProjects = () => {
                     ]}
                     tabs={fullAheadTabs}
                     defaultTab="home"
-                    panelMinHeight={500}
+                    panelMinHeight={isMobile ? 300 : 500}
                     showBackground={false}
                     websiteUrl="https://www.fullahead.in"
-                    useTrueFocus={true}
+                    useTrueFocus={!isMobile}
                 />
 
                 {/* Supply Chain Assessment Platform */}
@@ -123,10 +138,10 @@ const OurProjects = () => {
                     ]}
                     tabs={supplyChainTabs}
                     defaultTab="quiz"
-                    panelMinHeight={500}
+                    panelMinHeight={isMobile ? 300 : 500}
                     showBackground={false}
                     websiteUrl="https://scm-insights.vercel.app/"
-                    useTrueFocus={true}
+                    useTrueFocus={!isMobile}
                 />
             </div>
         </div>
@@ -134,4 +149,3 @@ const OurProjects = () => {
 };
 
 export default OurProjects;
-

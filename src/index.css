@@ -4,9 +4,31 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    /* Prevent horizontal overflow on mobile */
+    overflow-x: hidden;
+    /* Smooth scrolling */
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-bg-main text-white antialiased selection:bg-nebula-cyan/30 selection:text-nebula-cyan;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Quicksand', 'Inter', sans-serif;
+    /* Prevent horizontal overflow on mobile */
+    overflow-x: hidden;
+    /* Better touch scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Improve tap target sizes on mobile */
+  a,
+  button {
+    @apply touch-manipulation;
+  }
+
+  /* Better focus states for accessibility */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-nebula-cyan;
   }
 
   :root {
@@ -65,6 +87,7 @@
   }
 }
 
+/* Animations */
 @keyframes infinite-scroll {
   from {
     transform: translateX(0);
@@ -79,7 +102,24 @@
   animation: infinite-scroll 20s linear infinite;
 }
 
+/* Pulse animation for background orbs */
+@keyframes pulse-slow {
 
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 8s ease-in-out infinite;
+}
 
 @layer base {
   * {
@@ -89,4 +129,59 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Mobile-specific optimizations */
+@layer utilities {
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Safe area insets for notched devices */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Touch manipulation for better scrolling */
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+
+  /* Reduce motion for users who prefer it */
+  @media (prefers-reduced-motion: reduce) {
+
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* WebGL canvas optimization */
+canvas {
+  /* Prevent canvas from blocking touch scrolling */
+  touch-action: pan-y;
+  /* GPU acceleration hint */
+  will-change: contents;
+}
+
+/* Fix for iOS momentum scrolling */
+.momentum-scroll {
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
 }
