@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useMemo } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useOptimizedSettings } from '../hooks/useDeviceDetection';
 import './ScrollReveal.css';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -18,6 +19,7 @@ const ScrollReveal = ({
     wordAnimationEnd = 'bottom bottom'
 }) => {
     const containerRef = useRef(null);
+    const { shouldReduceEffects, isMobile } = useOptimizedSettings();
 
     const splitText = useMemo(() => {
         const text = typeof children === 'string' ? children : '';
@@ -35,6 +37,30 @@ const ScrollReveal = ({
         const el = containerRef.current;
         if (!el) return;
 
+        // Skip heavy animations on mobile/reduced motion
+        if (shouldReduceEffects) {
+            // Simple fade-in only
+            gsap.fromTo(
+                el,
+                { opacity: 0, y: 20 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.6,
+                    scrollTrigger: {
+                        trigger: el,
+                        start: 'top bottom-=10%',
+                        toggleActions: 'play none none none'
+                    }
+                }
+            );
+
+            return () => {
+                ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+            };
+        }
+
+        // Full animation for desktop
         const scroller = scrollContainerRef && scrollContainerRef.current ? scrollContainerRef.current : window;
 
         gsap.fromTo(
@@ -72,7 +98,7 @@ const ScrollReveal = ({
             }
         );
 
-        if (enableBlur) {
+        if (enableBlur && !isMobile) {
             gsap.fromTo(
                 wordElements,
                 { filter: `blur(${blurStrength}px)` },
@@ -94,11 +120,11 @@ const ScrollReveal = ({
         return () => {
             ScrollTrigger.getAll().forEach(trigger => trigger.kill());
         };
-    }, [scrollContainerRef, enableBlur, baseRotation, baseOpacity, rotationEnd, wordAnimationEnd, blurStrength]);
+    }, [scrollContainerRef, enableBlur, baseRotation, baseOpacity, rotationEnd, wordAnimationEnd, blurStrength, shouldReduceEffects, isMobile]);
 
     return (
         <h2 ref={containerRef} className={`scroll-reveal ${containerClassName}`}>
-            <p className={`scroll-reveal-text ${textClassName}`}>{splitText}</p>
+            <p className={`scroll-reveal-text text-xl sm:text-2xl md:text-3xl lg:text-4xl ${textClassName}`}>{splitText}</p>
         </h2>
     );
 };

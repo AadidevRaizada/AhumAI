@@ -1,6 +1,8 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
+import { motion } from 'framer-motion';
 import { FlippingCard } from './FlippingCard';
+import { useOptimizedSettings } from '../hooks/useDeviceDetection';
 
 const features = [
     {
@@ -57,6 +59,48 @@ const features = [
     }
 ];
 
+// Simple mobile card without 3D flip (much lighter)
+function MobileFeatureCard({ feature, index }) {
+    const [isExpanded, setIsExpanded] = React.useState(false);
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: index * 0.1, duration: 0.3 }}
+            className="bg-black/60 border border-white/10 rounded-xl overflow-hidden"
+            onClick={() => setIsExpanded(!isExpanded)}
+        >
+            {/* Image */}
+            <div className="relative h-32 overflow-hidden">
+                <img
+                    src={feature.front.imageSrc}
+                    alt={feature.front.imageAlt}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                />
+                <div className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm p-1.5 rounded-lg border border-white/10">
+                    <Icon icon={feature.front.icon} className={`w-5 h-5 ${feature.front.color}`} />
+                </div>
+            </div>
+
+            {/* Content */}
+            <div className="p-4">
+                <h3 className="text-base font-bold text-white mb-2">{feature.front.title}</h3>
+                <p className={`text-xs text-gray-400 transition-all duration-300 ${isExpanded ? '' : 'line-clamp-2'}`}>
+                    {feature.back.description}
+                </p>
+                <button className="text-nebula-cyan text-xs mt-2 flex items-center gap-1">
+                    {isExpanded ? 'Show less' : 'Read more'}
+                    <Icon icon={isExpanded ? "solar:alt-arrow-up-linear" : "solar:alt-arrow-down-linear"} />
+                </button>
+            </div>
+        </motion.div>
+    );
+}
+
+// Desktop card with flip animation
 function GenericCardFront({ data }) {
     return (
         <div className="flex flex-col h-full w-full p-4">
@@ -65,6 +109,7 @@ function GenericCardFront({ data }) {
                     src={data.imageSrc}
                     alt={data.imageAlt}
                     className="w-full h-full object-cover"
+                    loading="lazy"
                 />
                 <div className="absolute top-2 right-2 bg-black/50 backdrop-blur-md p-2 rounded-lg border border-white/10">
                     <Icon icon={data.icon} className={`w-6 h-6 ${data.color}`} />
@@ -88,24 +133,42 @@ function GenericCardBack({ data }) {
 }
 
 const FeatureGrid = () => {
-    return (
-        <section className="py-20 px-6 max-w-7xl mx-auto flex flex-col items-center">
-            <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-400 to-gray-600 mb-12 text-center">
-                Powerful Features
-            </h2>
+    const { isMobile, shouldReduceEffects, animationSettings } = useOptimizedSettings();
 
-            <div className="flex gap-8 flex-wrap justify-center w-full">
-                {features.map((feature, index) => (
-                    <FlippingCard
-                        key={feature.id}
-                        width={300}
-                        height={350}
-                        className="bg-black/80 dark:bg-black/80 dark:border-white/10"
-                        frontContent={<GenericCardFront data={feature.front} />}
-                        backContent={<GenericCardBack data={feature.back} />}
-                    />
-                ))}
-            </div>
+    return (
+        <section className="py-12 sm:py-20 px-4 sm:px-6 max-w-7xl mx-auto flex flex-col items-center">
+            <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: animationSettings.duration * 2 }}
+                className="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-400 to-gray-600 mb-8 sm:mb-12 text-center"
+            >
+                Powerful Features
+            </motion.h2>
+
+            {shouldReduceEffects ? (
+                // Mobile: Simple 2-column grid without 3D flipping
+                <div className="grid grid-cols-2 gap-4 w-full max-w-lg">
+                    {features.map((feature, index) => (
+                        <MobileFeatureCard key={feature.id} feature={feature} index={index} />
+                    ))}
+                </div>
+            ) : (
+                // Desktop: Flipping cards
+                <div className="flex gap-6 sm:gap-8 flex-wrap justify-center w-full">
+                    {features.map((feature) => (
+                        <FlippingCard
+                            key={feature.id}
+                            width={280}
+                            height={320}
+                            className="bg-black/80 dark:bg-black/80 dark:border-white/10"
+                            frontContent={<GenericCardFront data={feature.front} />}
+                            backContent={<GenericCardBack data={feature.back} />}
+                        />
+                    ))}
+                </div>
+            )}
         </section>
     );
 };
