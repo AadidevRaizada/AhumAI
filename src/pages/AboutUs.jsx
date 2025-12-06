@@ -16,27 +16,31 @@ import aryanIMG from '../assets/images/About/Aryan.jpg';
 const AboutUs = () => {
     const { showWebGLEffects, darkVeilSettings, animationSettings, isMobile } = useOptimizedSettings();
 
+    // Team members - Aadidev first for mobile, with order property for desktop layout
     const teamMembers = [
-        {
-            name: "Aryan Mishra",
-            role: "Co-Founder",
-            image: aryanIMG,
-            linkedin: "https://www.linkedin.com/in/aryan-mishra-5a8686343/",
-            isCenter: false
-        },
         {
             name: "Aadidev Raizada",
             role: "Founder",
             image: aadidevImg,
             linkedin: "https://www.linkedin.com/in/aadidev-raizada-68a339304/",
-            isCenter: true
+            isCenter: true,
+            desktopOrder: 2 // Center on desktop
+        },
+        {
+            name: "Aryan Mishra",
+            role: "Co-Founder",
+            image: aryanIMG,
+            linkedin: "https://www.linkedin.com/in/aryan-mishra-5a8686343/",
+            isCenter: false,
+            desktopOrder: 1 // Left on desktop
         },
         {
             name: "Manish Saw",
             role: "Lead Developer",
             image: manishImg,
             linkedin: "https://www.linkedin.com/in/manishindiyaar/",
-            isCenter: false
+            isCenter: false,
+            desktopOrder: 3 // Right on desktop
         }
     ];
 
@@ -107,8 +111,8 @@ const AboutUs = () => {
                                     href={member.linkedin}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className={`flex flex-col items-center cursor-pointer group ${member.isCenter ? 'md:-mt-8' : 'md:mt-24'
-                                        }`}
+                                    className={`flex flex-col items-center cursor-pointer group ${member.isCenter ? 'md:-mt-8' : 'md:mt-24'}`}
+                                    style={{ order: isMobile ? 0 : member.desktopOrder }}
                                 >
                                     <TiltedCard
                                         imageSrc={member.image}

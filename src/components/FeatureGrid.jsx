@@ -100,10 +100,10 @@ function MobileFeatureCard({ feature, index }) {
     );
 }
 
-// Desktop card with flip animation
-function GenericCardFront({ data }) {
+// Card with flip animation - responsive
+function GenericCardFront({ data, isMobile }) {
     return (
-        <div className="flex flex-col h-full w-full p-4">
+        <div className={`flex flex-col h-full w-full ${isMobile ? 'p-2' : 'p-4'}`}>
             <div className="relative flex-grow rounded-md overflow-hidden">
                 <img
                     src={data.imageSrc}
@@ -111,21 +111,21 @@ function GenericCardFront({ data }) {
                     className="w-full h-full object-cover"
                     loading="lazy"
                 />
-                <div className="absolute top-2 right-2 bg-black/50 backdrop-blur-md p-2 rounded-lg border border-white/10">
-                    <Icon icon={data.icon} className={`w-6 h-6 ${data.color}`} />
+                <div className={`absolute top-1 right-1 sm:top-2 sm:right-2 bg-black/50 backdrop-blur-md ${isMobile ? 'p-1' : 'p-2'} rounded-lg border border-white/10`}>
+                    <Icon icon={data.icon} className={`${isMobile ? 'w-4 h-4' : 'w-6 h-6'} ${data.color}`} />
                 </div>
             </div>
-            <div className="p-2">
-                <h3 className="text-lg font-bold mt-2 text-neutral-950 dark:text-neutral-50">{data.title}</h3>
+            <div className={isMobile ? 'p-1' : 'p-2'}>
+                <h3 className={`${isMobile ? 'text-xs' : 'text-lg'} font-bold mt-1 sm:mt-2 text-neutral-950 dark:text-neutral-50`}>{data.title}</h3>
             </div>
         </div>
     );
 }
 
-function GenericCardBack({ data }) {
+function GenericCardBack({ data, isMobile }) {
     return (
-        <div className="flex flex-col items-center justify-center h-full w-full p-6 text-center">
-            <p className="text-sm mt-2 text-neutral-600 dark:text-neutral-400">
+        <div className={`flex flex-col items-center justify-center h-full w-full ${isMobile ? 'p-3' : 'p-6'} text-center`}>
+            <p className={`${isMobile ? 'text-[10px] leading-tight' : 'text-sm'} mt-1 sm:mt-2 text-neutral-600 dark:text-neutral-400`}>
                 {data.description}
             </p>
         </div>
@@ -133,7 +133,11 @@ function GenericCardBack({ data }) {
 }
 
 const FeatureGrid = () => {
-    const { isMobile, shouldReduceEffects, animationSettings } = useOptimizedSettings();
+    const { isMobile, animationSettings } = useOptimizedSettings();
+
+    // Responsive card sizes
+    const cardWidth = isMobile ? 160 : 280;
+    const cardHeight = isMobile ? 200 : 320;
 
     return (
         <section className="py-12 sm:py-20 px-4 sm:px-6 max-w-7xl mx-auto flex flex-col items-center">
@@ -147,28 +151,19 @@ const FeatureGrid = () => {
                 Powerful Features
             </motion.h2>
 
-            {shouldReduceEffects ? (
-                // Mobile: Simple 2-column grid without 3D flipping
-                <div className="grid grid-cols-2 gap-4 w-full max-w-lg">
-                    {features.map((feature, index) => (
-                        <MobileFeatureCard key={feature.id} feature={feature} index={index} />
-                    ))}
-                </div>
-            ) : (
-                // Desktop: Flipping cards
-                <div className="flex gap-6 sm:gap-8 flex-wrap justify-center w-full">
-                    {features.map((feature) => (
-                        <FlippingCard
-                            key={feature.id}
-                            width={280}
-                            height={320}
-                            className="bg-black/80 dark:bg-black/80 dark:border-white/10"
-                            frontContent={<GenericCardFront data={feature.front} />}
-                            backContent={<GenericCardBack data={feature.back} />}
-                        />
-                    ))}
-                </div>
-            )}
+            {/* Flipping cards for all devices */}
+            <div className="grid grid-cols-2 md:flex gap-4 sm:gap-6 md:gap-8 md:flex-wrap justify-center w-full max-w-[360px] md:max-w-none">
+                {features.map((feature) => (
+                    <FlippingCard
+                        key={feature.id}
+                        width={cardWidth}
+                        height={cardHeight}
+                        className="bg-black/80 dark:bg-black/80 dark:border-white/10"
+                        frontContent={<GenericCardFront data={feature.front} isMobile={isMobile} />}
+                        backContent={<GenericCardBack data={feature.back} isMobile={isMobile} />}
+                    />
+                ))}
+            </div>
         </section>
     );
 };
