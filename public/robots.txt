@@ -1,0 +1,11 @@
+# AhumAI Robots.txt
+# https://ahumai.vercel.app
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://ahumai.vercel.app/sitemap.xml
+
+# Crawl-delay (optional, for politeness)
+Crawl-delay: 1
