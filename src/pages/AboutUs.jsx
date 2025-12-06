@@ -19,21 +19,21 @@ const AboutUs = () => {
     const teamMembers = [
         {
             name: "Aryan Mishra",
-            role: "Developer",
+            role: "Co-Founder",
             image: aryanIMG,
             linkedin: "https://www.linkedin.com/in/aryan-mishra-5a8686343/",
             isCenter: false
         },
         {
             name: "Aadidev Raizada",
-            role: "Founder & Lead Developer",
+            role: "Founder",
             image: aadidevImg,
             linkedin: "https://www.linkedin.com/in/aadidev-raizada-68a339304/",
             isCenter: true
         },
         {
             name: "Manish Saw",
-            role: "Developer",
+            role: "Lead Developer",
             image: manishImg,
             linkedin: "https://www.linkedin.com/in/manishindiyaar/",
             isCenter: false
