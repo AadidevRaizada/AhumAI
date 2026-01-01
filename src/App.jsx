@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import OurProjects from './pages/OurProjects';
 import AboutUs from './pages/AboutUs';
 import ContactUs from './pages/ContactUs';
+import BackedByKiro from './components/BackedByKiro';
 import { useOptimizedSettings } from './hooks/useDeviceDetection';
 
 // Lazy load heavy component
@@ -86,6 +87,9 @@ function App() {
     <Router>
       <Layout>
         <AnimatedRoutes />
+
+        {/* Backed by Kiro Section */}
+        <BackedByKiro />
 
         {/* Footer */}
         <footer className="py-10 sm:py-14 border-t border-white/5 mt-16 sm:mt-20 relative z-[500] px-4">
