@@ -1,16 +1,44 @@
-# React + Vite
+# AhumAI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Building the Maritime Software Ecosystem.**
 
-Currently, two official plugins are available:
+Landing page for AhumAI — a small team of engineers building software for maritime. This is not a capabilities deck. It is a record of what we have actually built.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tech Stack
 
-## React Compiler
+- [Next.js 15](https://nextjs.org/) — React framework
+- [Tailwind CSS 3](https://tailwindcss.com/) — utility-first CSS
+- [Framer Motion](https://www.framer.com/motion/) — animation
+- [GSAP](https://gsap.com/) — advanced animation (ScrollTrigger)
+- [Three.js](https://threejs.org/) / [React Three Fiber](https://docs.pmnd.rs/react-three-fiber) — WebGL backgrounds
+- [Radix UI](https://www.radix-ui.com/) — accessible primitives
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Getting Started
 
-## Expanding the ESLint configuration
+```bash
+npm install
+npm run dev
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Open [http://localhost:3000](http://localhost:3000).
+
+## Build
+
+```bash
+npm run build
+npm start
+```
+
+## Deploy
+
+Deployed on [Vercel](https://vercel.com). Push to `main` triggers automatic deployment.
+
+## Products
+
+- [NavCert AI](https://navcert.com) — Maritime compliance automation. 500+ certificates processed daily.
+- [Sorch](https://sorch.co) — Autonomous maritime hiring. In active development.
+- [Opax](https://github.com/manishindiyaar/Opax.git) — Unified AI interface for healthcare. Built & demonstrable.
+
+## Design System
+
+"The Dry Dock" — industrial honesty, structure-exposed. See [DESIGN.md](./DESIGN.md) for tokens and [PRODUCT.md](./PRODUCT.md) for brand strategy.
