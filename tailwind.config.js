@@ -2,21 +2,22 @@
 export default {
 	darkMode: ["class"],
 	content: [
-		"./index.html",
 		"./src/**/*.{js,ts,jsx,tsx}",
 	],
 	theme: {
 		extend: {
 			colors: {
 				'bg-main': '#050505',
-				'nebula-gold': '#fbbf24',
-				'nebula-pink': '#ec4899',
+				'signal-amber': '#D97A0B',
+				'signal-amber-deep': '#B5670A',
+				'deep-hull': '#080809',
+				'hull-plate': '#0E0E0F',
+				'rust-line': '#1C1C1D',
+				'warm-chalk': '#EDEBE6',
+				'fog-gray': '#85827E',
+				'bilge': '#141415',
 				'nebula-cyan': '#22d3ee',
 				'nebula-purple': '#a855f7',
-				'nebula-green': '#22c55e',
-				'brand-red': '#D32F2F',
-				'brand-purple': '#9C27B0',
-				'brand-blue': '#2196F3',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				card: {

@@ -1,8 +1,10 @@
+'use client'
+
 import React from 'react';
 import { Icon } from '@iconify/react';
 import { motion } from 'framer-motion';
 import { FlippingCard } from './FlippingCard';
-import { useOptimizedSettings } from '../hooks/useDeviceDetection';
+import { cn } from "@/lib/utils";
 
 const features = [
     {
@@ -64,12 +66,8 @@ function MobileFeatureCard({ feature, index }) {
     const [isExpanded, setIsExpanded] = React.useState(false);
 
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.1, duration: 0.3 }}
-            className="bg-black/60 border border-white/10 rounded-xl overflow-hidden"
+        <div
+            className="bg-hull-plate border border-rust-line rounded-sm overflow-hidden"
             onClick={() => setIsExpanded(!isExpanded)}
         >
             {/* Image */}
@@ -96,7 +94,7 @@ function MobileFeatureCard({ feature, index }) {
                     <Icon icon={isExpanded ? "solar:alt-arrow-up-linear" : "solar:alt-arrow-down-linear"} />
                 </button>
             </div>
-        </motion.div>
+        </div>
     );
 }
 
@@ -133,23 +131,17 @@ function GenericCardBack({ data, isMobile }) {
 }
 
 const FeatureGrid = () => {
-    const { isMobile, animationSettings } = useOptimizedSettings();
-
+    const isMobile = false;
     // Responsive card sizes
-    const cardWidth = isMobile ? 160 : 280;
-    const cardHeight = isMobile ? 200 : 320;
+    const cardWidth = 280;
+    const cardHeight = 320;
 
     return (
         <section className="py-12 sm:py-20 px-4 sm:px-6 max-w-7xl mx-auto flex flex-col items-center">
-            <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: animationSettings.duration * 2 }}
-                className="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-400 to-gray-600 mb-8 sm:mb-12 text-center"
+            <h2 className="text-2xl sm:text-3xl font-bold text-warm-chalk mb-8 sm:mb-12 text-center"
             >
                 Powerful Features
-            </motion.h2>
+            </h2>
 
             {/* Flipping cards for all devices */}
             <div className="grid grid-cols-2 md:flex gap-4 sm:gap-6 md:gap-8 md:flex-wrap justify-center w-full max-w-[360px] md:max-w-none">

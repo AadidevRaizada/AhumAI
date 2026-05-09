@@ -2,13 +2,12 @@ import React, { lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { Icon } from '@iconify/react';
 import MobileGradient from '../components/MobileGradient';
-import { useOptimizedSettings } from '../hooks/useDeviceDetection';
 
 // Lazy load heavy WebGL component
 const FaultyTerminal = lazy(() => import('../components/FaultyTerminal'));
 
 const ContactUs = () => {
-    const { showWebGLEffects, faultyTerminalSettings, animationSettings, isMobile } = useOptimizedSettings();
+    const showWebGLEffects = true; const isMobile = false;
 
     return (
         <div className="pt-20 relative min-h-screen bg-black">
@@ -17,21 +16,21 @@ const ContactUs = () => {
                 {showWebGLEffects ? (
                     <Suspense fallback={<MobileGradient variant="terminal" />}>
                         <FaultyTerminal
-                            scale={faultyTerminalSettings.scale}
+                            scale={1.5}
                             gridMul={[2, 1]}
                             digitSize={1.5}
                             timeScale={0.3}
-                            scanlineIntensity={faultyTerminalSettings.scanlineIntensity}
-                            glitchAmount={faultyTerminalSettings.glitchAmount}
-                            flickerAmount={faultyTerminalSettings.flickerAmount}
+                            scanlineIntensity={0.2}
+                            glitchAmount={1.2}
+                            flickerAmount={0.5}
                             noiseAmp={0.8}
-                            chromaticAberration={faultyTerminalSettings.chromaticAberration}
+                            chromaticAberration={2}
                             curvature={0.1}
                             tint="#22d3ee"
-                            mouseReact={faultyTerminalSettings.mouseReact}
+                            mouseReact={true}
                             mouseStrength={0.3}
-                            brightness={faultyTerminalSettings.brightness}
-                            pageLoadAnimation={faultyTerminalSettings.pageLoadAnimation}
+                            brightness={0.4}
+                            pageLoadAnimation={true}
                         />
                     </Suspense>
                 ) : (
@@ -48,7 +47,7 @@ const ContactUs = () => {
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: animationSettings.duration * 2 }}
+                    transition={{ duration: 0.6 }}
                     className="text-center mb-12 sm:mb-16"
                 >
                     <p className="text-nebula-cyan text-base sm:text-lg mb-3 sm:mb-4">Let's Connect</p>
@@ -66,7 +65,7 @@ const ContactUs = () => {
                     <motion.div
                         initial={{ opacity: 0, x: -30 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: animationSettings.duration * 2, delay: 0.2 }}
+                        transition={{ duration: 0.6, delay: 0.2 }}
                         className="space-y-6 sm:space-y-8"
                     >
                         <div>
@@ -120,7 +119,7 @@ const ContactUs = () => {
                     <motion.div
                         initial={{ opacity: 0, x: 30 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: animationSettings.duration * 2, delay: 0.4 }}
+                        transition={{ duration: 0.6, delay: 0.4 }}
                         className="space-y-6 sm:space-y-8"
                     >
                         {/* Hours Card */}
@@ -197,7 +196,7 @@ const ContactUs = () => {
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: animationSettings.duration * 2, delay: 0.6 }}
+                    transition={{ duration: 0.6, delay: 0.6 }}
                     className="mt-16 sm:mt-20 text-center"
                 >
                     <p className="text-gray-400 text-base sm:text-lg mb-4 sm:mb-6">

@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -12,7 +11,7 @@
   }
 
   body {
-    @apply bg-bg-main text-white antialiased selection:bg-nebula-cyan/30 selection:text-nebula-cyan;
+    @apply bg-bg-main text-warm-chalk antialiased selection:bg-signal-amber/20 selection:text-signal-amber;
     font-family: 'Quicksand', 'Inter', sans-serif;
     /* Prevent horizontal overflow on mobile */
     overflow-x: hidden;
@@ -28,7 +27,7 @@
 
   /* Better focus states for accessibility */
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-nebula-cyan;
+    @apply outline-2 outline-offset-2 outline-signal-amber;
   }
 
   :root {
