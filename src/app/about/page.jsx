@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic'
 
-const AboutUs = dynamic(() => import('@/pages/AboutUs'), { ssr: false })
+const AboutUs = dynamic(() => import('@/views/AboutUs'), { ssr: false })
 
 export default function AboutPage() {
   return <AboutUs />
